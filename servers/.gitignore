@@ -1,0 +1,4 @@
+# ignore all the server logs
+*
+# keep this file
+!.gitignore

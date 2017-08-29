@@ -1,0 +1,11 @@
+handle unicode better instead of just ignoring it
+handle people with "." in their name
+handle username conflicts (discriminator or id)
+improve callbacks - use filestructure to inform callback for more robustness
+support single quote tokenizer escape?
+support more arguments for markov
+channels with the same name in one server?
+handle emojis better
+handle emojis as keys
+more graceful errors
+handle connection change crashing the bot -- wrapper?

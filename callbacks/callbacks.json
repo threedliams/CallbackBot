@@ -1,0 +1,15 @@
+[
+    {
+        "key": {
+            "example": true
+        },
+        "result": [
+            {
+                "send_message": "This is an example callback!"
+            },
+            {
+                "add_reaction": "call_me"
+            }
+        ]
+    }
+]
