@@ -1,4 +1,4 @@
-# CallbackBot
+# narcov
 A customizeable callback bot for discord. Includes a markov chain generator and emoji polling
 ***Note: to speed up generating markov chains, the bot saves your chat history locally. I am not responsible for any data leaked for this reason, you have been warned.***
 
