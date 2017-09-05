@@ -1,14 +1,187 @@
 [
     {
         "key": {
-            "example": true
+            "bird up": true
+        },
+        "result": [{
+            "run_func": "bird_up"
+        }]
+    },
+    {
+        "key": {
+            "buzz me": true
+        },
+        "result": [{
+            "add_reaction": "call_me"
+        }]
+    },
+    {
+        "key": {
+            "call_me": true
+        },
+        "result": [{
+            "add_reaction": "call_me"
+        }]
+    },
+    {
+        "key": {
+            "i know you": true
+        },
+        "result": [{
+            "do_random": [
+                [
+                    {
+                        "send_message": "You're Mellow Mike!"
+                    },
+                    {
+                        "send_file": "./callbacks/supmellowmike.png"
+                    }
+                ],
+                [
+                    {
+                        "send_message": "You're Pimple Pete!"
+                    },
+                    {
+                        "send_file": "./callbacks/suppimplepete.png"
+                    }
+                ],
+                [
+                    {
+                        "send_message": "You're Bangkok Dangerous!"
+                    },
+                    {
+                        "send_file": "./callbacks/bangkokdangerous.png"
+                    }
+                ],
+                [
+                    {
+                        "send_message": "You're Lady Godiva!"
+                    },
+                    {
+                        "send_file": "./callbacks/ladygodiva.png"
+                    }
+                ]
+            ]
+        }]
+    },
+    {
+        "key": {
+            "mellow mike": true
+        },
+        "result": [{
+            "send_file": "./callbacks/supmellowmike.png"
+        }]
+    },
+    {
+        "key": {
+            "mello": true
+        },
+        "result": [{
+            "send_file": "./callbacks/supmello.png"
+        }]
+    },
+    {
+        "key": {
+            "pimple pete": true
+        },
+        "result": [{
+            "send_file": "./callbacks/suppimplepete.png"
+        }]
+    },
+    {
+        "key": {
+            "we'll be right back": true
+        },
+        "result": [{
+            "send_file": "./callbacks/woo.png"
+        }]
+    },
+    {
+        "key": {
+            "hot thomas": true
+        },
+        "result": [{
+            "send_file": "./callbacks/hotthomas.jpg"
+        }]
+    },
+    {
+        "key": {
+            "doth my nugs bequeath me": true
         },
         "result": [
             {
-                "send_message": "This is an example callback!"
+                "send_message": "You're Bangkok Dangerous!"
             },
             {
-                "add_reaction": "call_me"
+                "send_file": "./callbacks/bangkokdangerous.png"
+            }
+        ]
+    },
+    {
+        "key": {
+            "lady godiva": true
+        },
+        "result": [{
+            "send_file": "./callbacks/ladygodiva.png"
+        }]
+    },
+    {
+        "key": {
+            "sqwankee": true
+        },
+        "result": [{
+            "send_file": "./callbacks/sqwankee.jpg"
+        }]
+    },
+    {
+        "key": {
+            "+and": [
+                {
+                    "did": true
+                },
+                {
+                    "+or": [
+                        {
+                           "you": true
+                        },
+                        {
+                            "ya": true
+                        }
+                    ]
+                },
+                {
+                    "hear": true
+                },
+                {
+                    "+or": [
+                        {
+                            "they're": true
+                        },
+                        {
+                            "there": true
+                        },
+                        {
+                            "their": true
+                        }
+                    ]
+                },
+                {
+                    "taking": true
+                },
+                {
+                    "off": true
+                },
+                {
+                    "market": true
+                }
+            ]
+        },
+        "result": [
+            {
+                "send_message": "Why would they take that off the market!?"
+            },
+            {
+                "send_file": "./callbacks/whywouldthey.png"
             }
         ]
     }
