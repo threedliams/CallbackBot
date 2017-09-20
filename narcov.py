@@ -692,6 +692,13 @@ def tokenize(messageString):
     if(len(currentWord) > 0):
         tokens.append(currentWord)
     return tokens
+
+    
+#loads the config
+configData = None
+configFile = "./config.json"
+with open(configFile) as data_file:
+    configData = json.load(data_file)
                 
 #starts up the client
-client.run('MjI5MTMwMzY0MjM1Mjg0NDgw.CsexzQ.NNw97grt6qb0wQs77icoPP-Tz8U')
+client.run(configData["token"])
