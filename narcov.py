@@ -1,6 +1,7 @@
 
 import discord
 import os
+import re
 #TODO: handle unicode better instead of just ignoring it
 from unidecode import unidecode
 import markovify
@@ -421,25 +422,35 @@ def createPoll(tokenizedMessage, message):
 
     return messageText
 
-#!roll 1d4 10d20
+################################################################################
+# roll
+#
+# Generates a list of die rolls (format XdY for X rolls of a Y-sided dice).
+# Multiple die types possible per command, separated by space (XdY MdN...)
+#
+# Args:
+#   None
+#
+# Return - a string of each individual dice result and the sum of all rolls
+################################################################################
 def roll(tokenizedMessage, message):
     random.seed()
-    tokenizedMessage.remove("!roll")
-    errorMessage = "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice. Up to 6 types at a time, 5 rolls each."
-    dieList = tokenizedMessage
-    if((''.join(dieList).translate(str.maketrans('0123456789d','           '))).strip() != ''):
+    errorMessage = "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice."
+    dieList = tokenizedMessage[:]
+    dieList.remove("!roll")
+    reg = re.compile('[1-9]\d*d[1-9]\d*')
+    if(len(list(filter(reg.match,dieList))) != len(dieList)):
         return errorMessage
     rollTotal = 0
-    rollText = "Result of rolls :"
+    rollText = "Result of rolls:"
 
     for die in dieList:
         attempt = die.split('d')
-        if(len(attempt)!=2):
-            return errorMessage
-        elif((int(attempt[0]) == 0) or (int(attempt[1]) == 0)):
-            return errorMessage
+        #if(len(attempt)!=2):
+            #return errorMessage
+        #elif((int(attempt[0]) == 0) or (int(attempt[1]) == 0)):
+            #return errorMessage
         rollText += " ("
-        #attempt = list(die)
         for i in range(int(attempt[0])):
              x = random.randrange(int(attempt[1])) + 1
              rollTotal += x
@@ -732,4 +743,4 @@ with open(configFile) as data_file:
     configData = json.load(data_file)
 
 #starts up the client
-client.run(configData["token"])
+client.run(configData[0]["token"])
