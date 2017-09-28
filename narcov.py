@@ -108,10 +108,10 @@ async def on_ready():
                     for username in liveChannelMap[channel.id].keys():
                         f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + username + ".txt", 'w')
                         f.write(liveChannelMap[channel.id][username])
-                        
+
 
     isLiveReady = True
-                
+
     print("live ready!")
 
 ################################################################################
@@ -133,7 +133,7 @@ async def on_message(message):
 
     global isSavedReady
     global isLiveReady
-    
+
     tokenizedMessage = tokenize(message.content)
 
     await functionSwitcher(tokenizedMessage, message)
@@ -286,7 +286,7 @@ def removeVote(message, reaction, user):
 
     for i in range(1, len(pollLines), 2):
         splitLine = pollLines[i].split()
-        
+
         if(unidecode(reaction.emoji) in emojiDict.keys()):
             if(emojiDict[unidecode(reaction.emoji)] == splitLine[0] and i + 1 < len(pollLines)):
                 userList = tokenize(pollLines[i+1])
@@ -320,7 +320,7 @@ def saveMessage(message, channelMap):
             channelMap[message.channel.id] = {}
 
     usermap = channelMap[message.channel.id]
-            
+
     if not(message.author.name in list(usermap.keys())):
         usermap[message.author.name] = unidecode(message.content)
     else:
@@ -421,6 +421,37 @@ def createPoll(tokenizedMessage, message):
 
     return messageText
 
+#!roll 1d4 10d20
+def roll(tokenizedMessage, message):
+    random.seed()
+    tokenizedMessage.remove("!roll")
+    errorMessage = "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice. Up to 6 types at a time, 5 rolls each."
+    dieList = tokenizedMessage
+    if((''.join(dieList).translate(str.maketrans('0123456789d','           '))).strip() != ''):
+        return errorMessage
+    rollTotal = 0
+    rollText = "Result of rolls :"
+
+    for die in dieList:
+        attempt = die.split('d')
+        if(len(attempt)!=2):
+            return errorMessage
+        elif((int(attempt[0]) == 0) or (int(attempt[1]) == 0)):
+            return errorMessage
+        rollText += " ("
+        #attempt = list(die)
+        for i in range(int(attempt[0])):
+             x = random.randrange(int(attempt[1])) + 1
+             rollTotal += x
+             if(i == (int(attempt[0]) - 1)):
+                rollText += str(x)
+             else:
+                rollText += (str(x) + " + ")
+        rollText += ") +"
+    rollText = rollText.strip('+')
+    rollText += ("= " + str(rollTotal))
+
+    return rollText
 
 
 ################################################################################
@@ -447,6 +478,7 @@ async def functionSwitcher(tokenizedMessage, message):
         "!markov": markov,
         "!magic": magic,
         "!poll": createPoll,
+        "!roll": roll
     }
 
     if(functionName in functionOptions.keys()):
@@ -692,6 +724,12 @@ def tokenize(messageString):
     if(len(currentWord) > 0):
         tokens.append(currentWord)
     return tokens
-                
+
+#loads the config
+configData = None
+configFile = "./config.json"
+with open(configFile) as data_file:
+    configData = json.load(data_file)
+
 #starts up the client
-client.run('MjI5MTMwMzY0MjM1Mjg0NDgw.CsexzQ.NNw97grt6qb0wQs77icoPP-Tz8U')
+client.run("MzU5ODk3MDAwNjQyMDg0ODY0.DKN03w.7ZIZ9kgl05oKMaPtS86echh5130")
