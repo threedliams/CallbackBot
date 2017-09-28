@@ -732,4 +732,4 @@ with open(configFile) as data_file:
     configData = json.load(data_file)
 
 #starts up the client
-client.run("MzU5ODk3MDAwNjQyMDg0ODY0.DKN03w.7ZIZ9kgl05oKMaPtS86echh5130")
+client.run(configData["token"])
