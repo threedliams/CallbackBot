@@ -478,7 +478,7 @@ async def functionSwitcher(tokenizedMessage, message):
         "!markov": markov,
         "!magic": magic,
         "!poll": createPoll,
-        "!roll": roll
+        "!roll": roll,
     }
 
     if(functionName in functionOptions.keys()):
