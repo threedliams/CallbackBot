@@ -1,6 +1,7 @@
 
 import discord
 import os
+import re
 #TODO: handle unicode better instead of just ignoring it
 from unidecode import unidecode
 import markovify
@@ -108,10 +109,10 @@ async def on_ready():
                     for username in liveChannelMap[channel.id].keys():
                         f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + username + ".txt", 'w')
                         f.write(liveChannelMap[channel.id][username])
-                        
+
 
     isLiveReady = True
-                
+
     print("live ready!")
 
 ################################################################################
@@ -133,7 +134,7 @@ async def on_message(message):
 
     global isSavedReady
     global isLiveReady
-    
+
     tokenizedMessage = tokenize(message.content)
 
     await functionSwitcher(tokenizedMessage, message)
@@ -286,7 +287,7 @@ def removeVote(message, reaction, user):
 
     for i in range(1, len(pollLines), 2):
         splitLine = pollLines[i].split()
-        
+
         if(unidecode(reaction.emoji) in emojiDict.keys()):
             if(emojiDict[unidecode(reaction.emoji)] == splitLine[0] and i + 1 < len(pollLines)):
                 userList = tokenize(pollLines[i+1])
@@ -320,7 +321,7 @@ def saveMessage(message, channelMap):
             channelMap[message.channel.id] = {}
 
     usermap = channelMap[message.channel.id]
-            
+
     if not(message.author.name in list(usermap.keys())):
         usermap[message.author.name] = unidecode(message.content)
     else:
@@ -421,6 +422,43 @@ def createPoll(tokenizedMessage, message):
 
     return messageText
 
+################################################################################
+# roll
+#
+# Generates a list of die rolls (format XdY for X rolls of a Y-sided dice).
+# Multiple die types possible per command, separated by space (XdY MdN...)
+#
+# Args:
+#   None
+#
+# Return - a string of each individual dice result and the sum of all rolls
+################################################################################
+def roll(tokenizedMessage, message):
+    random.seed()
+    errorMessage = "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice."
+    dieList = tokenizedMessage[:]
+    dieList.remove("!roll")
+    reg = re.compile('[1-9]\d*d[1-9]\d*')
+    if(len(list(filter(reg.match,dieList))) != len(dieList)):
+        return errorMessage
+    rollTotal = 0
+    rollText = "Result of rolls:"
+
+    for die in dieList:
+        attempt = die.split('d')
+        rollText += " ("
+        for i in range(int(attempt[0])):
+             x = random.randrange(int(attempt[1])) + 1
+             rollTotal += x
+             if(i == (int(attempt[0]) - 1)):
+                rollText += str(x)
+             else:
+                rollText += (str(x) + " + ")
+        rollText += ") +"
+    rollText = rollText.strip('+')
+    rollText += ("= " + str(rollTotal))
+
+    return rollText
 
 
 ################################################################################
@@ -447,6 +485,7 @@ async def functionSwitcher(tokenizedMessage, message):
         "!markov": markov,
         "!magic": magic,
         "!poll": createPoll,
+        "!roll": roll,
     }
 
     if(functionName in functionOptions.keys()):
@@ -693,12 +732,11 @@ def tokenize(messageString):
         tokens.append(currentWord)
     return tokens
 
-    
 #loads the config
 configData = None
 configFile = "./config.json"
 with open(configFile) as data_file:
     configData = json.load(data_file)
-                
+
 #starts up the client
-client.run(configData["token"])
+client.run(configData[0]["token"])
