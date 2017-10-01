@@ -446,10 +446,6 @@ def roll(tokenizedMessage, message):
 
     for die in dieList:
         attempt = die.split('d')
-        #if(len(attempt)!=2):
-            #return errorMessage
-        #elif((int(attempt[0]) == 0) or (int(attempt[1]) == 0)):
-            #return errorMessage
         rollText += " ("
         for i in range(int(attempt[0])):
              x = random.randrange(int(attempt[1])) + 1
