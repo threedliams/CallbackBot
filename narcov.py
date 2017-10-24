@@ -294,10 +294,10 @@ def removeVote(message, reaction, user):
                 if(len(userList) == 2):
                     pollLines[i+1] = "Votes: none"
                 else:
-                    if(userList[1] == "\"" + user.name + "\","):
-                        pollLines[i+1].replace("\"" + user.name + "\", ", "")
+                    if(userList[1] == user.name):
+                        pollLines[i+1] = pollLines[i+1].replace("\"" + user.name + "\", ", "")
                     else:
-                        pollLines[i+1].replace(", \"" + user.name + "\"", "")
+                        pollLines[i+1] = pollLines[i+1].replace(", \"" + user.name + "\"", "")
 
     pollText = "\n".join(pollLines)
     return pollText
