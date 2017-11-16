@@ -67,7 +67,8 @@ async def on_ready():
     callbackFile = "./callbacks/callbacks.json"
 
     #load eric andre transciptions
-    birdUpText open('./birdup.txt', 'r').read()
+    with open('./birdup.txt', 'r') as birdUpFile
+        birdUpText = birdUpFile.read()
 
     #load callbackFile
     with open(callbackFile) as data_file:
