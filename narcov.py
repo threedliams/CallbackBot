@@ -149,7 +149,7 @@ async def on_message(message):
 
     await functionSwitcher(tokenizedMessage, message)
 
-    if(len(tokenizedMessage > 2)):
+    if(len(tokenizedMessage) > 2):
         await checkForClaps(tokenizedMessage, message)
 
     if(isSavedReady and not isLiveReady):
