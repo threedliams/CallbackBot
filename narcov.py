@@ -62,6 +62,7 @@ async def on_ready():
     global isSavedReady
     global isLiveReady
     global callbackData
+    global birdUpText
 
     rootFolder = "./servers/"
     callbackFile = "./callbacks/callbacks.json"
@@ -148,7 +149,8 @@ async def on_message(message):
 
     await functionSwitcher(tokenizedMessage, message)
 
-    checkForClaps(tokenizedMessage, message)
+    if(len(tokenizedMessage > 2)):
+        await checkForClaps(tokenizedMessage, message)
 
     if(isSavedReady and not isLiveReady):
         saveMessage(message, savedChannelMap)
@@ -429,8 +431,7 @@ def markov(tokenizedMessage, message):
 # Return - True if the ratio passes the threshold, False otherwise
 ################################################################################
 def fuzzyMatch(inputStr, matchingStr, threshold):
-    ratio = fuzz.token_set_ratio(inputStr, matchingStr)
-
+    ratio = fuzz.ratio(inputStr, matchingStr)
     if(ratio >= threshold):
         return True
 
@@ -450,9 +451,12 @@ def fuzzyMatch(inputStr, matchingStr, threshold):
 #
 # Return - None
 ################################################################################
-def checkForClaps(tokenizedMessage, message):
-    if(fuzzyMatch(tokenizedMessage, birdUpText, 50)):
-        add_reaction(tokenizedMessage, message, "clap")
+async def checkForClaps(tokenizedMessage, message):
+    #TODO this is super inefficient and should be replaced with something better
+    for line in birdUpText.split('\n'):
+        if(fuzzyMatch(tokenizedMessage, line, 50)):
+            await add_reaction(tokenizedMessage, message, "clap")
+            break
 
 ################################################################################
 # magic
@@ -750,8 +754,8 @@ async def run_func(tokenizedMessage, message, functionToRun):
 # Return - nothing
 ################################################################################
 async def bird_up(tokenizedMessage, message):
-    text_model = markovify.NewlineText()
-    await client.send_message(message.channel, text_model.make_sentence(birdUpText))
+    text_model = markovify.NewlineText(birdUpText)
+    await client.send_message(message.channel, text_model.make_sentence())
 
 ################################################################################
 # tokenize
