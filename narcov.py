@@ -7,6 +7,8 @@ from unidecode import unidecode
 import markovify
 import json
 from pprint import pprint
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 import random
 
@@ -403,6 +405,29 @@ def markov(tokenizedMessage, message):
             return "\"" + newSentence + "\"\n-" + username
 
 ################################################################################
+# fuzzyMatch
+#
+# Generates a random magic 8 ball response
+#
+# Args:
+#   
+#   inputStr - the string to search for
+#
+#   matchingStr - the string to match against
+#
+#   threshold - the minimum value for success
+#
+# Return - True if the ratio passes the threshold, False otherwise
+################################################################################
+def fuzzyMatch(inputStr, matchingStr, threshold):
+    ratio = fuzz.token_set_ratio(inputStr, matchingStr)
+
+    if(ratio >= threshold):
+        return True
+
+    return False
+
+################################################################################
 # magic
 #
 # Generates a random magic 8 ball response
@@ -418,6 +443,19 @@ def magic(tokenizedMessage, message):
     magicResult = magicOptions[random.randrange(len(magicOptions))]
     return magicResult
 
+################################################################################
+# createPoll
+#
+# Creates and saves a poll given a poll command
+#
+# Args:
+#
+#   tokenizedMessage - a tokenized string version of the given message
+#
+#   message - the original message, used for metadata like the author and channel
+#
+# Return - the text of the poll to return
+################################################################################
 def createPoll(tokenizedMessage, message):
     #!poll "this is a poll" "yes" "no"
     messageText = tokenizedMessage[1]
