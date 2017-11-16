@@ -22,8 +22,11 @@ polls = []
 isSavedReady = False
 isLiveReady = False
 
+birdUpText = ""
+
 # Used to get around json's unicode issues
 emojiDict = {
+    "clap": "\U0001F44F",
     "call_me": "\U0001F919",
     "0": "\U0000FE0F\U00000030\U000020E3",
     "1": "\U0000FE0F\U00000031\U000020E3",
@@ -62,6 +65,9 @@ async def on_ready():
 
     rootFolder = "./servers/"
     callbackFile = "./callbacks/callbacks.json"
+
+    #load eric andre transciptions
+    birdUpText open('./birdup.txt', 'r').read()
 
     #load callbackFile
     with open(callbackFile) as data_file:
@@ -140,6 +146,8 @@ async def on_message(message):
     tokenizedMessage = tokenize(message.content)
 
     await functionSwitcher(tokenizedMessage, message)
+
+    checkForClaps(tokenizedMessage, message)
 
     if(isSavedReady and not isLiveReady):
         saveMessage(message, savedChannelMap)
@@ -426,6 +434,24 @@ def fuzzyMatch(inputStr, matchingStr, threshold):
         return True
 
     return False
+
+################################################################################
+# checkForClaps
+#
+# Runs a fuzzy match against the eric andre transcription to check for a
+# reference. If there is a reference, narcov reacts by gently clapping.
+#
+# Args:
+#
+#   tokenizedMessage - a tokenized string version of the given message
+#
+#   message - the original message, used for metadata like the author and channel
+#
+# Return - None
+################################################################################
+def checkForClaps(tokenizedMessage, message):
+    if(fuzzyMatch(tokenizedMessage, birdUpText)):
+        add_reaction(tokenizedMessage, message, "clap")
 
 ################################################################################
 # magic
@@ -723,8 +749,8 @@ async def run_func(tokenizedMessage, message, functionToRun):
 # Return - nothing
 ################################################################################
 async def bird_up(tokenizedMessage, message):
-    text_model = markovify.NewlineText(open('./birdup.txt', 'r').read())
-    await client.send_message(message.channel, text_model.make_sentence())
+    text_model = markovify.NewlineText()
+    await client.send_message(message.channel, text_model.make_sentence(birdUpText))
 
 ################################################################################
 # tokenize
