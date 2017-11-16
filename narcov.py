@@ -364,6 +364,14 @@ def markov(tokenizedMessage, message):
 
     compiledLogs = ""
 
+    if username == "random":
+        random.seed()
+        randomUser = random.randrange(len(list(usermap.keys())) + 1)
+        if randomUser == len(list(usermap.keys())):
+            username = "everyone"
+        else:
+            username = list(usermap.keys())[randomUser]
+
     if not(username in list(usermap.keys())) and not (username == "everyone" or username == "me"):
         return "Sorry I couldn't find a user named '" + username + "'. Usage: !markov [username]"
     elif username == "everyone":
