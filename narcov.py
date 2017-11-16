@@ -451,7 +451,7 @@ def fuzzyMatch(inputStr, matchingStr, threshold):
 # Return - None
 ################################################################################
 def checkForClaps(tokenizedMessage, message):
-    if(fuzzyMatch(tokenizedMessage, birdUpText)):
+    if(fuzzyMatch(tokenizedMessage, birdUpText, 50)):
         add_reaction(tokenizedMessage, message, "clap")
 
 ################################################################################
