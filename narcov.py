@@ -430,8 +430,14 @@ def markov(tokenizedMessage, message):
 #
 # Return - True if the ratio passes the threshold, False otherwise
 ################################################################################
-def fuzzyMatch(inputStr, matchingStr, threshold):
-    ratio = fuzz.ratio(inputStr, matchingStr)
+def fuzzyMatch(inputStr, matchingStr, threshold, function="ratio"):
+    ratio = 0
+
+    if(function == "ratio"):
+        ratio = fuzz.ratio(inputStr, matchingStr)
+    elif(function == "token_sort_ratio"):
+        ratio = fuzz.token_sort_ratio(inputStr, matchingStr)
+
     if(ratio >= threshold):
         return True
 
@@ -575,6 +581,7 @@ async def functionSwitcher(tokenizedMessage, message):
                 await parseCallbackResult(tokenizedMessage, message, callback["result"])
                 break;
 
+#TODO: refactor into a function switch instead of an if block
 ################################################################################
 # parseCallbackKey
 #
@@ -600,6 +607,8 @@ def parseCallbackKey(tokenizedMessage, callback):
         for boolCallback in callback["+or"]:
             truthValue = truthValue or parseCallbackKey(tokenizedMessage, boolCallback)
         return truthValue
+    elif(list(callback.keys())[0] == "+fuzzy"):
+        return parseFuzzyKey(tokenizedMessage, callback["+fuzzy"])
     else:
         #replace any emoji keys with their actual unicode
         if(list(callback.keys())[0] in emojiDict.keys()):
@@ -612,6 +621,25 @@ def parseCallbackKey(tokenizedMessage, callback):
             return not callback[list(callback.keys())[0]]
 
     return False
+
+################################################################################
+# parseFuzzyKey
+#
+# Parses a fuzzy callback to try to match.
+#
+# Args:
+#
+#   tokenizedMessage - a tokenized version of the message
+#
+#   callback - the jsonified callback we're using to parse
+#
+# Return - whether or not the message passes the threshold
+################################################################################
+def parseFuzzyKey(tokenizedMessage, callback):
+    if ("function" in list(callback.keys())):
+       return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], callback["threshold"], callback["function"])
+
+    return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], callback["threshold"])
 
 ################################################################################
 # parseCallbackResult
