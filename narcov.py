@@ -637,9 +637,9 @@ def parseCallbackKey(tokenizedMessage, callback):
 ################################################################################
 def parseFuzzyKey(tokenizedMessage, callback):
     if ("function" in list(callback.keys())):
-       return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], callback["threshold"], callback["function"])
+       return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]), callback["function"])
 
-    return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], callback["threshold"])
+    return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]))
 
 ################################################################################
 # parseCallbackResult
