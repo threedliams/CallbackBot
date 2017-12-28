@@ -184,5 +184,22 @@
                 "send_file": "./callbacks/whywouldthey.png"
             }
         ]
+    },
+    {
+        "key": {
+            "+fuzzy": {
+                "match": "Did you hear they're taking off the market",
+                "threshold": "60",
+                "function": "token_sort_ratio"
+            }
+        },
+        "result": [
+            {
+                "send_message": "Why would they take that off the market!?"
+            },
+            {
+                "send_file": "./callbacks/whywouldthey.png"
+            }
+        ]
     }
 ]
