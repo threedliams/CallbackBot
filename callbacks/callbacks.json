@@ -135,6 +135,14 @@
     },
     {
         "key": {
+            "milk": true
+        },
+        "result": [{
+            "send_file": "./callbacks/gotmilk.jpg"
+        }]
+    },
+    {
+        "key": {
             "+and": [
                 {
                     "did": true
