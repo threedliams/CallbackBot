@@ -359,7 +359,8 @@ def markov(tokenizedMessage, message):
     global isLiveReady
 
     #TODO: handle username vs other arguments better
-    username = ' '.join(tokenizedMessage[1:])
+    #TODO: handle users with '+' in their name
+    usernames = ' '.join(tokenizedMessage[1:]).split(' + ')
 
     usermap = None
 
@@ -377,25 +378,26 @@ def markov(tokenizedMessage, message):
 
     compiledLogs = ""
 
-    if username == "random":
-        random.seed()
-        randomUser = random.randrange(len(list(usermap.keys())) + 1)
-        if randomUser == len(list(usermap.keys())):
-            username = "everyone"
-        else:
-            username = list(usermap.keys())[randomUser]
+    for username in usernames:
+        if username == "random":
+            random.seed()
+            randomUser = random.randrange(len(list(usermap.keys())) + 1)
+            if randomUser == len(list(usermap.keys())):
+                username = "everyone"
+            else:
+                username = list(usermap.keys())[randomUser]
 
-    if not(username in list(usermap.keys())) and not (username == "everyone" or username == "me"):
-        return "Sorry I couldn't find a user named '" + username + "'. Usage: !markov [username]"
-    elif username == "everyone":
-        for each_username in list(usermap.keys()):
-            if each_username == client.user.name:
-                continue
-            compiledLogs = compiledLogs + "\n" + usermap[each_username]
-    elif username == "me":
-        compiledLogs = usermap[author.name]
-    else:
-        compiledLogs = usermap[username]
+        if not(username in list(usermap.keys())) and not (username == "everyone" or username == "me"):
+            return "Sorry I couldn't find a user named '" + username + "'. Usage: !markov [username]"
+        elif username == "everyone":
+            for each_username in list(usermap.keys()):
+                if each_username == client.user.name:
+                    continue
+                compiledLogs = compiledLogs + "\n" + usermap[each_username]
+        elif username == "me":
+            compiledLogs = compiledLogs + usermap[author.name]
+        else:
+            compiledLogs = compiledLogs + usermap[username]
 
     markov_model = markovify.NewlineText(compiledLogs)
 
