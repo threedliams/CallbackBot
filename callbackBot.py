@@ -404,7 +404,7 @@ def markov(tokenizedMessage, message):
 
     byline = ""
     for i in range(len(byUsers)):
-        if(i > 1):
+        if(i > 0):
             byline += " and "
         byline += byUsers[i]
 
