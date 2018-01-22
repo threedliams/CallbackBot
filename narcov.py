@@ -377,6 +377,7 @@ def markov(tokenizedMessage, message):
 
 
     compiledLogs = ""
+    byUsers = []
 
     for username in usernames:
         if username == "random":
@@ -394,10 +395,13 @@ def markov(tokenizedMessage, message):
                 if each_username == client.user.name:
                     continue
                 compiledLogs = compiledLogs + "\n" + usermap[each_username]
+            byUsers.append("everyone")
         elif username == "me":
-            compiledLogs = compiledLogs + usermap[author.name]
+            compiledLogs += usermap[author.name]
+            byUsers.append(author.name)
         else:
-            compiledLogs = compiledLogs + usermap[username]
+            compiledLogs += usermap[username]
+            byUsers.append(username)
 
     markov_model = markovify.NewlineText(compiledLogs)
 
@@ -408,6 +412,12 @@ def markov(tokenizedMessage, message):
             newSentence = markov_model.make_sentence();
             if not(newSentence is None):
                 break;
+
+    byline = ""
+    for i in range(len(byUsers)):
+        if(i > 1):
+            byline += " and "
+        byline += byUsers[i]
 
     if(newSentence is None):
         return "Whoops, I tried a few times but it looks like " + username + " needs to talk more before I can generate a good sentence. Try someone else!"
