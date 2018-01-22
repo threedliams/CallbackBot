@@ -422,10 +422,7 @@ def markov(tokenizedMessage, message):
     if(newSentence is None):
         return "Whoops, I tried a few times but it looks like " + username + " needs to talk more before I can generate a good sentence. Try someone else!"
     else:
-        if(username == "me"):
-            return "\"" + newSentence + "\"\n-" + author.name
-        else:
-            return "\"" + newSentence + "\"\n-" + username
+        return "\"" + newSentence + "\"\n-" + byline
 
 ################################################################################
 # fuzzyMatch
