@@ -1,6 +1,7 @@
 
 # Used to get around json's unicode issues
 emojiDict = {
+    "clap": "\U0001F44F",
     "call_me": "\U0001F919",
     "0": "\U0000FE0F\U00000030\U000020E3",
     "1": "\U0000FE0F\U00000031\U000020E3",

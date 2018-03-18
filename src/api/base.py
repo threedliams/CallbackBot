@@ -116,7 +116,7 @@ class API(ABC):
 
         #load eric andre transciptions
         with open('./birdup.txt', 'r') as birdUpFile:
-            birdUpText = birdUpFile.read()
+            self.birdUpText = birdUpFile.read()
 
         #load callbackFile
         with open(callbackFile) as data_file:

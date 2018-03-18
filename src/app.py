@@ -173,23 +173,6 @@ def fuzzyMatch(inputStr, matchingStr, threshold, function="ratio"):
     return False
 
 ################################################################################
-# bird_up
-#
-# Markovs from The Eric Andre Show script file
-#
-# Args:
-#
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
-#
-# Return - nothing
-################################################################################
-async def bird_up(message):
-    text_model = markovify.NewlineText(message.api.birdUpText)
-    await message.api.send_message(message, text_model.make_sentence())
-
-################################################################################
 # checkForClaps
 #
 # Runs a fuzzy match against the eric andre transcription to check for a
@@ -205,9 +188,9 @@ async def bird_up(message):
 ################################################################################
 async def checkForClaps(message):
     #TODO this is super inefficient and should be replaced with something better
-    for line in birdUpText.split('\n'):
+    for line in message.api.birdUpText.split('\n'):
         if(fuzzyMatch(message.tokenizedMessage, line, 50)):
-            await add_reaction(message.tokenizedMessage, message, "clap")
+            await message.api.addReaction(message, "clap")
             break
 
 ################################################################################

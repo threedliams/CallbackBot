@@ -85,14 +85,14 @@ class DiscordAPI(API, discord.Client):
     async def on_reaction_clear(self, reaction, user):
         await API.on_reaction_clear(self, reaction, user.name)
 
-    async def sendFile(self, tokenizedMessage, message, fileToSend):
+    async def sendFile(self, message, fileToSend):
         await self.send_file(message.payload.channel, fileToSend)
 
-    async def addReaction(self, tokenizedMessage, message, reactionToAdd):
+    async def addReaction(self, message, reactionToAdd):
         global emojiDict
         #replace emoji result with actual unicode
         if(reactionToAdd in src.data.emoji.emojiDict.keys()):
-            await self.add_reaction(message, src.data.emoji.emojiDict[reactionToAdd])
+            await self.add_reaction(message.payload, src.data.emoji.emojiDict[reactionToAdd])
 
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)

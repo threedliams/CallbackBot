@@ -1,4 +1,4 @@
-
+import markovify
 
 import src.app
 import src.data.polls
@@ -93,9 +93,9 @@ async def parseCallbackResult(message, callback):
 ################################################################################
 def parseFuzzyKey(tokenizedMessage, callback):
     if ("function" in list(callback.keys())):
-       return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]), callback["function"])
+       return src.app.fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]), callback["function"])
 
-    return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]))
+    return src.app.fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]))
 
 ################################################################################
 # do_random
@@ -135,6 +135,22 @@ async def do_random(message, callbackList):
 async def run_func(message, functionToRun):
     await globals()[functionToRun](message)
 
+################################################################################
+# bird_up
+#
+# Markovs from The Eric Andre Show script file
+#
+# Args:
+#
+#   tokenizedMessage - a tokenized version of the message
+#
+#   message - the original message, used for metadata like user and channel
+#
+# Return - nothing
+################################################################################
+async def bird_up(message):
+    text_model = markovify.NewlineText(message.api.birdUpText)
+    await message.api.send_message(message.channel, text_model.make_sentence())
 
 ################################################################################
 # functionSwitcher
