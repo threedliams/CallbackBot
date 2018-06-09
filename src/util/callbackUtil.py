@@ -69,6 +69,7 @@ async def parseCallbackResult(message, callback):
         "send_file": message.api.sendFile,
         "add_reaction": message.api.addReaction,
         "send_message": message.api.sendMessage,
+        "play_song": message.api.playSong,
         "do_random": do_random,
         "run_func": run_func,
     }
@@ -177,9 +178,12 @@ async def functionSwitcher(message):
         "!magic": src.app.magic,
         "!poll": src.data.polls.createPoll,
         "!roll": src.app.roll,
+        "!stop": message.api.stopAndDisconnect,
     }
 
-    if(functionName in functionOptions.keys()):
+    if(functionName == '!stop'):
+        await message.api.stopAndDisconnect(message)
+    elif(functionName in functionOptions.keys()):
         sent_message = await message.api.sendMessage(message, functionOptions[functionName](message))
         sent_message = src.data.messages.Message(message.api, sent_message)
         if(functionName == "!poll"):
