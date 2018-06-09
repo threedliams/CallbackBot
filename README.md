@@ -9,6 +9,10 @@ A customizeable callback bot for discord. Includes a markov chain generator and 
   - `python3 -m pip install -U discord.py`
 - [markovify](https://github.com/jsvine/markovify)
   - `pip install markovify`
+- [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy)
+  - `pip install fuzzywuzzy`
+- [youtube_dl](https://github.com/rg3/youtube-dl)
+  - `pip install youtube_dl`
 ## Adding and running the bot
 
 ### Adding the bot to your channel

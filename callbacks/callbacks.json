@@ -11,5 +11,15 @@
                 "add_reaction": "call_me"
             }
         ]
+    },
+    {
+        "key": {
+            "i need a hero": true
+        },
+        "result": [
+            {
+                "play_song": "https://www.youtube.com/watch?v=G4nl6RZvew0"
+            }
+        ]
     }
 ]

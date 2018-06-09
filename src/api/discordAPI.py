@@ -11,6 +11,8 @@ class DiscordAPI(API, discord.Client):
     def __init__(self, token):
         super().__init__(token)
         self.apiName = "discord"
+        self.voice = None
+        self.player = None
 
     def author(self, payload):
         return payload.author
@@ -196,3 +198,22 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)
+<<<<<<< HEAD
+=======
+    
+    async def playSong(self, message, songToPlay):
+        self.voice = await self.join_voice_channel(self.get_channel("229055686926008322"))
+        self.player = await self.voice.create_ytdl_player(songToPlay)
+        self.player.start()
+    
+    async def stopAndDisconnect(self, message):
+        if self.voice:
+            if self.player:
+                self.player.stop()
+            if self.voice.is_connected():
+                await self.voice.disconnect()
+            self.voice = None
+            self.player = None
+        return "Fun ended"
+            
+>>>>>>> 259b54d... Added hero
