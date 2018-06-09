@@ -212,6 +212,56 @@
     },
     {
         "key": {
+            "what up": true
+        },
+        "result": [
+            {
+                "play_song": "https://www.youtube.com/watch?v=CqCCBohjaqA"
+            }
+        ]
+    },
+    {
+        "key": {
+            "bangarang": true
+        },
+        "result": [
+            {
+                "play_song": "https://www.youtube.com/watch?v=cR2XilcGYOo"
+            }
+        ]
+    },
+    {
+        "key": {
+            "ben folds and sufjan stevens sharing a one bedroom": true
+        },
+        "result": [
+            {
+                "play_song":"https://www.youtube.com/watch?v=qzuMF326W7c"
+            }
+        ]
+    },
+    {
+        "key": {
+            "nuh uh fucker": true
+        },
+        "result": [
+            {
+                "play_song":"https://www.youtube.com/watch?v=QlNN4XebVo0"
+            }
+        ]
+    },
+    {
+        "key": {
+            "untouchable": true
+        },
+        "result": [
+            {
+                "play_song":"https://www.youtube.com/watch?v=J6uywk2Id8I"
+            }
+        ]
+    },
+    {
+        "key": {
             "i need a hero": true
         },
         "result": [
