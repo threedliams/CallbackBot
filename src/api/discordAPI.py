@@ -44,6 +44,13 @@ class DiscordAPI(API, discord.Client):
     def getServers(self):
         return self.servers
 
+    def getVoiceChannels(self, server):
+        voice_channels = []
+        for channel in self.get_all_channels():
+            if channel.server == server and channel.type == discord.ChannelType.voice:
+                voice_channels.append(channel)
+        return voice_channels
+
     def serverName(self, server):
         return server.name
 
@@ -202,9 +209,14 @@ class DiscordAPI(API, discord.Client):
 =======
     
     async def playSong(self, message, songToPlay):
-        self.voice = await self.join_voice_channel(self.get_channel("229055686926008322"))
+        if not self.voice:
+            voice_channel = self.getVoiceChannels(message.channel.server)[0]
+            self.voice = await self.join_voice_channel(voice_channel)
+        if self.player:
+            self.player.stop()
         self.player = await self.voice.create_ytdl_player(songToPlay)
         self.player.start()
+
     
     async def stopAndDisconnect(self, message):
         if self.voice:
@@ -214,6 +226,10 @@ class DiscordAPI(API, discord.Client):
                 await self.voice.disconnect()
             self.voice = None
             self.player = None
+<<<<<<< HEAD
         return "Fun ended"
             
 >>>>>>> 259b54d... Added hero
+=======
+            
+>>>>>>> 81d6621... Almost fixed the bugs

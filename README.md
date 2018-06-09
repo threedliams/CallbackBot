@@ -13,6 +13,10 @@ A customizeable callback bot for discord. Includes a markov chain generator and 
   - `pip install fuzzywuzzy`
 - [youtube_dl](https://github.com/rg3/youtube-dl)
   - `pip install youtube_dl`
+- [pynacl](https://github.com/pyca/pynacl)
+  - `pip install pynacl`
+- [ffmpeg](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
+  - Link above will explain for multiple environments
 ## Adding and running the bot
 
 ### Adding the bot to your channel
