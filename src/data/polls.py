@@ -15,8 +15,6 @@ class Poll:
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized string version of the given message
-#
 #   message - the original message, used for metadata like the author and channel
 #
 # Return - the text of the poll to return
@@ -44,7 +42,7 @@ def createPoll(message):
 #
 #   reaction - the vote to consider
 #
-#   user - the voting user
+#   username - the voting user
 #
 # Returns - nothing
 ################################################################################
@@ -77,7 +75,7 @@ def addVote(message, reaction, username):
 #
 #   reaction - the vote to remove
 #
-#   user - the voting user
+#   username - the voting user
 #
 # Returns - nothing
 ################################################################################

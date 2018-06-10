@@ -65,34 +65,134 @@ class DiscordAPI(API, discord.Client):
     async def editMessage(self, message, newContent):
         return await self.edit_message(message, newContent)
 
-    # @client.event
+    ################################################################################
+    # on_ready
+    #
+    # When the bot starts up, this runs all the startup functions
+    #
+    # Args:
+    #
+    #   None
+    #
+    # Returns - nothing
+    ################################################################################
     async def on_ready(self):
-        await API.on_ready(self)
+        await API.onReady(self)
 
-    # @client.event
+    ################################################################################
+    # on_message
+    #
+    # When someone sends a message in a channel with a bot, this function fires
+    # so you can process the given message
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    # Returns - nothing
+    ################################################################################
     async def on_message(self, message):
-        await API.on_message(self, Message(self, message))
+        await API.onMessage(self, Message(self, message))
 
-    # @client.event
+    ################################################################################
+    # on_reaction_add
+    #
+    # When someone adds a reaction in a channel with a bot, this function fires
+    # so you can process the given reaction
+    #
+    # Args:
+    #
+    #   reaction - a Reaction object
+    #
+    #   username - the reacting user
+    #
+    # Returns - nothing
+    ################################################################################
     async def on_reaction_add(self, reaction, user):
-        await API.on_reaction_add(self, reaction, user.name)
+        await API.onReactionAdd(self, reaction, user.name)
 
-    # @client.event
+    ################################################################################
+    # on_reaction_Remove
+    #
+    # When someone removes a reaction in a channel with a bot, this function fires
+    # so you can process the given reaction
+    #
+    # Args:
+    #
+    #   reaction - a Reaction object
+    #
+    #   username - the reacting user
+    #
+    # Returns - nothing
+    ################################################################################
     async def on_reaction_remove(self, reaction, user):
-        await API.on_reaction_remove(self, reaction, user.name)
+        await API.onReactionRemove(self, reaction, user.name)
 
-    # @client.event
+    ################################################################################
+    # on_reaction_rlear
+    #
+    # When someone clears a reaction in a channel with a bot, this function fires
+    # so you can process the given reaction
+    #
+    # Args:
+    #
+    #   reaction - the Reaction object
+    #
+    #   username - the reacting user
+    #
+    # Returns - nothing
+    ################################################################################
     async def on_reaction_clear(self, reaction, user):
-        await API.on_reaction_clear(self, reaction, user.name)
+        await API.onReactionClear(self, reaction, user.name)
 
-    async def sendFile(self, tokenizedMessage, message, fileToSend):
+    ################################################################################
+    # sendFile
+    #
+    # Sends the given file to the given channel
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    #   fileToSend - a string with the path of the file to send
+    #
+    # Return - nothing
+    ################################################################################
+    async def sendFile(self, message, fileToSend):
         await self.send_file(message.payload.channel, fileToSend)
 
-    async def addReaction(self, tokenizedMessage, message, reactionToAdd):
+    ################################################################################
+    # addReaction
+    #s
+    # Adds the given reaction to the given message
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    #   reactionToAdd - a string with the name of the emoji to add, found in
+    #   emojiDict
+    #
+    # Return - nothing
+    ################################################################################
+    async def addReaction(self, message, reactionToAdd):
         global emojiDict
         #replace emoji result with actual unicode
         if(reactionToAdd in src.data.emoji.emojiDict.keys()):
-            await self.add_reaction(message, src.data.emoji.emojiDict[reactionToAdd])
+            await self.add_reaction(message.payload, src.data.emoji.emojiDict[reactionToAdd])
 
+    ################################################################################
+    # sendMessage
+    #
+    # Sends the given message to the given channel
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    #   messageToSend - a string message to send
+    #
+    # Return - nothing
+    ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)

@@ -92,7 +92,7 @@ class API(ABC):
         pass
 
     ################################################################################
-    # on_ready
+    # onReady
     #
     # When the bot starts up, this runs all the startup functions
     #
@@ -102,7 +102,7 @@ class API(ABC):
     #
     # Returns - nothing
     ################################################################################
-    async def on_ready(self):
+    async def onReady(self):
         print('Logged in as')
         print(self.clientName())
         print(self.clientID())
@@ -138,7 +138,7 @@ class API(ABC):
         for server in servers:
             for channel in self.channels(server):
                 if not(self.channelID(channel) in list(self.liveChannelMap.keys())):
-                    self.liveChannelMap[self.channelID(channel)] = {};
+                    self.liveChannelMap[self.channelID(channel)] = {}
                 await self.getLogs(channel)
 
         #save current logs for next time
@@ -162,18 +162,18 @@ class API(ABC):
         print("live ready!")
 
     ################################################################################
-    # on_message
+    # onMessage
     #
     # When someone sends a message in a channel with a bot, this function fires
     # so you can process the given message
     #
     # Args:
     #
-    #   message - the message sent
+    #   message - a Message object
     #
     # Returns - nothing
     ################################################################################
-    async def on_message(self, message):
+    async def onMessage(self, message):
 
         await src.util.callbackUtil.functionSwitcher(message)
 
@@ -184,20 +184,20 @@ class API(ABC):
             src.data.messages.saveMessage(message, self.liveChannelMap)
 
     ################################################################################
-    # on_reaction_add
+    # onReactionAdd
     #
     # When someone adds a reaction in a channel with a bot, this function fires
     # so you can process the given reaction
     #
     # Args:
     #
-    #   reaction - the reaction object
+    #   reaction - a Reaction object
     #
-    #   user - the reacting user
+    #   username - the reacting user
     #
     # Returns - nothing
     ################################################################################
-    async def on_reaction_add(self, reaction, username):
+    async def onReactionAdd(self, reaction, username):
         message = self.reactionMessage(reaction)
 
         isPoll = False
@@ -213,20 +213,20 @@ class API(ABC):
         self.polls.append(newPoll)
 
     ################################################################################
-    # on_reaction_remove
+    # onReactionRemove
     #
     # When someone removes a reaction in a channel with a bot, this function fires
     # so you can process the given reaction
     #
     # Args:
     #
-    #   reaction - the reaction object
+    #   reaction - a Reaction object
     #
-    #   user - the reacting user
+    #   username - the reacting user
     #
     # Returns - nothing
     ################################################################################
-    async def on_reaction_remove(self, reaction, username):
+    async def onReactionRemove(self, reaction, username):
         message = self.reactionMessage(reaction)
 
         isPoll = False
@@ -241,21 +241,21 @@ class API(ABC):
         self.polls.append(newPoll)
 
     ################################################################################
-    # on_reaction_clear
+    # onReactionClear
     #
     # When someone clears a reaction in a channel with a bot, this function fires
     # so you can process the given reaction
     #
     # Args:
     #
-    #   reaction - the reaction object
+    #   reaction - the Reaction object
     #
-    #   user - the reacting user
+    #   username - the reacting user
     #
     # Returns - nothing
     ################################################################################
-    async def on_reaction_clear(self, reaction, username):
-        mesage = self.reactionMessage(reaction)
+    async def onReactionClear(self, reaction, username):
+        message = self.reactionMessage(reaction)
 
         isPoll = False
 
@@ -269,15 +269,13 @@ class API(ABC):
         self.polls.append(newPoll)
 
     ################################################################################
-    # send_file
+    # sendFile
     #
     # Sends the given file to the given channel
     #
     # Args:
     #
-    #   tokenizedMessage - a tokenized version of the message
-    #
-    #   message - the original message, used for metadata like user and channel
+    #   message - a Message object
     #
     #   fileToSend - a string with the path of the file to send
     #
@@ -288,15 +286,13 @@ class API(ABC):
         pass
 
     ################################################################################
-    # add_reaction
+    # addReaction
     #
     # Adds the given reaction to the given message
     #
     # Args:
     #
-    #   tokenizedMessage - a tokenized version of the message
-    #
-    #   message - the original message, used for metadata like user and channel
+    #   message - a Message object
     #
     #   reactionToAdd - a string with the name of the emoji to add, found in
     #   emojiDict
@@ -308,15 +304,13 @@ class API(ABC):
         pass
 
     ################################################################################
-    # send_message
+    # sendMessage
     #
     # Sends the given message to the given channel
     #
     # Args:
     #
-    #   tokenizedMessage - a tokenized version of the message
-    #
-    #   message - the original message, used for metadata like user and channel
+    #   message - a Message object
     #
     #   messageToSend - a string message to send
     #

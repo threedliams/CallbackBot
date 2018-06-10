@@ -1,4 +1,4 @@
-
+import random
 
 import src.app
 import src.data.polls
@@ -55,9 +55,7 @@ def parseCallbackKey(tokenizedMessage, callback):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   callback - the jsonified callback we're using to parse
 #
@@ -93,9 +91,9 @@ async def parseCallbackResult(message, callback):
 ################################################################################
 def parseFuzzyKey(tokenizedMessage, callback):
     if ("function" in list(callback.keys())):
-       return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]), callback["function"])
+       return src.app.fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]), callback["function"])
 
-    return fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]))
+    return src.app.fuzzyMatch(" ".join(tokenizedMessage), callback["match"], int(callback["threshold"]))
 
 ################################################################################
 # do_random
@@ -104,9 +102,7 @@ def parseFuzzyKey(tokenizedMessage, callback):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   callbackList - a list of callbacks results to randomize
 #
@@ -124,9 +120,7 @@ async def do_random(message, callbackList):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   functionToRun - the function you want to run for the callback
 #
@@ -144,9 +138,7 @@ async def run_func(message, functionToRun):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 # Returns - nothing
 ################################################################################

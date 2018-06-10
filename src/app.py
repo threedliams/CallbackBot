@@ -12,8 +12,6 @@ import random
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized string version of the given message
-#
 #   message - the original message, used for metadata like the author and channel
 #
 # Returns - a markov setence in the form of a quote for the given user
@@ -66,13 +64,13 @@ def markov(message):
 
     markov_model = markovify.NewlineText(compiledLogs)
 
-    newSentence = markov_model.make_sentence();
+    newSentence = markov_model.make_sentence()
     #if we couldn't generate a sentence, try a few more times to get a valid one
     if(newSentence is None):
         for i in range(5):
-            newSentence = markov_model.make_sentence();
+            newSentence = markov_model.make_sentence()
             if not(newSentence is None):
-                break;
+                break
 
     byline = ""
     for i in range(len(byUsers)):
@@ -91,7 +89,8 @@ def markov(message):
 # Generates a random magic 8 ball response
 #
 # Args:
-#   None
+#
+#   message - the original message, used for metadata like the author and channel
 #
 # Return - a string of a randomized response
 ################################################################################
@@ -108,7 +107,8 @@ def magic(message):
 # Multiple die types possible per command, separated by space (XdY MdN...)
 #
 # Args:
-#   None
+#
+#   message - the original message, used for metadata like the author and channel
 #
 # Return - a string of each individual dice result and the sum of all rolls
 ################################################################################
@@ -156,6 +156,8 @@ def roll(message):
 #   matchingStr - the string to match against
 #
 #   threshold - the minimum value for success
+#
+#   function - the fuzzy matching function to use
 #
 # Return - True if the ratio passes the threshold, False otherwise
 ################################################################################
