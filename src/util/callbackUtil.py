@@ -1,4 +1,5 @@
 import markovify
+import random
 
 import src.app
 import src.data.polls
@@ -55,9 +56,7 @@ def parseCallbackKey(tokenizedMessage, callback):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   callback - the jsonified callback we're using to parse
 #
@@ -105,9 +104,7 @@ def parseFuzzyKey(tokenizedMessage, callback):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   callbackList - a list of callbacks results to randomize
 #
@@ -125,9 +122,7 @@ async def do_random(message, callbackList):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 #   functionToRun - the function you want to run for the callback
 #
@@ -161,9 +156,7 @@ async def bird_up(message):
 #
 # Args:
 #
-#   tokenizedMessage - a tokenized version of the message
-#
-#   message - the original message, used for metadata like user and channel
+#   message - a Message object
 #
 # Returns - nothing
 ################################################################################
