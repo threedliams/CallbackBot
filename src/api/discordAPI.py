@@ -205,7 +205,20 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)
-    
+ 
+    ################################################################################
+    # playSong
+    #
+    # Joins your first voice channel and plays a song
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    #   songToPlay - a url to download and play from youtube
+    #
+    # Return - nothing
+    ################################################################################
     async def playSong(self, message, songToPlay):
         if not self.voice:
             voice_channel = self.getVoiceChannels(message.channel.server)[0]
@@ -214,8 +227,18 @@ class DiscordAPI(API, discord.Client):
             self.player.stop()
         self.player = await self.voice.create_ytdl_player(songToPlay)
         self.player.start()
-
     
+    ################################################################################
+    # stopAndDisconnect
+    #
+    # Stops playing a song and disconnects from the voice channel
+    #
+    # Args:
+    #
+    #   message - a Message object
+    #
+    # Return - nothing
+    ################################################################################
     async def stopAndDisconnect(self, message):
         if self.voice:
             if self.player:
