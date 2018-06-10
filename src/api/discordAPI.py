@@ -205,8 +205,6 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)
-<<<<<<< HEAD
-=======
     
     async def playSong(self, message, songToPlay):
         if not self.voice:
@@ -226,10 +224,3 @@ class DiscordAPI(API, discord.Client):
                 await self.voice.disconnect()
             self.voice = None
             self.player = None
-<<<<<<< HEAD
-        return "Fun ended"
-            
->>>>>>> 259b54d... Added hero
-=======
-            
->>>>>>> 81d6621... Almost fixed the bugs
