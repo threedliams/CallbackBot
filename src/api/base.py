@@ -124,7 +124,7 @@ class API(ABC):
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     #TODO: channels with the same name on one server?
                     if(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
-                        if not(channel.id in list(self.savedChannelMap.keys())):
+                        if not(channel.id in self.savedChannelMap):
                             self.savedChannelMap[self.channelID(channel)] = {}
                         for fileName in os.listdir(rootFolder + underscoredServerName + "/" + underscoredChannelName):
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + fileName, 'r')
@@ -137,7 +137,7 @@ class API(ABC):
         #catch up to current logs
         for server in servers:
             for channel in self.channels(server):
-                if not(self.channelID(channel) in list(self.liveChannelMap.keys())):
+                if not(self.channelID(channel) in self.liveChannelMap):
                     self.liveChannelMap[self.channelID(channel)] = {}
                 await self.getLogs(channel)
 
