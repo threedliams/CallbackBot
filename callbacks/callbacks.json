@@ -71,5 +71,18 @@
                 "play_song": "https://www.youtube.com/watch?v=G4nl6RZvew0"
             }
         ]
+    },
+    {
+        "key": {
+            "+or": {
+                "hey ya'll": true,
+                "hey y'all": true
+            }
+        },
+        "result": [
+            {
+                "play_song": "https://www.youtube.com/watch?v=ZZ5LpwO-An4"
+            }
+        ]
     }
 ]
