@@ -100,6 +100,11 @@
                         "send_file": "./callbacks/shred6.png"
                     }
                 ],
+                [
+                    {
+                        "send_file": "./callbacks/shred7.png"
+                    }
+                ]
            ]
         }]
     },      
