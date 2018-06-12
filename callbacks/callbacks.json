@@ -316,10 +316,14 @@
     },
     {
         "key": {
-            "+or": {
-                "hey ya'll": true,
-                "hey y'all": true
-            }
+            "+or": [
+                {
+                    "hey ya'll": true
+                },
+                {
+                    "hey y'all": true
+                }
+            ]
         },
         "result": [
             {
