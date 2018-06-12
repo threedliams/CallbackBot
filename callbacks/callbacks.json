@@ -66,6 +66,45 @@
     },
     {
         "key": {
+            "shred anthony": true
+        },
+        "result": [{
+            "do_random": [
+                [
+                    {
+                        "send_file": "./callbacks/shred1.jpg"
+                    }
+                ],
+                [
+                    {
+                        "send_file": "./callbacks/shred2.png"
+                    }
+                ],
+                [
+                    {
+                        "send_file": "./callbacks/shred3.jpg"
+                    }
+                ],
+                [
+                    {
+                        "send_file": "./callbacks/shred4.jpg"
+                    }
+                ],
+                [
+                    {
+                        "send_file": "./callbacks/shred5.png"
+                    }
+                ],
+                [
+                    {
+                        "send_file": "./callbacks/shred6.png"
+                    }
+                ],
+           ]
+        }]
+    },      
+    {
+        "key": {
             "mellow mike": true
         },
         "result": [{
