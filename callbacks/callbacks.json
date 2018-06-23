@@ -330,5 +330,22 @@
                 "play_song": "https://www.youtube.com/watch?v=ZZ5LpwO-An4"
             }
         ]
+    },
+    {
+        "key": {
+            "+or": [
+                {
+                    "river rat": true
+                },
+                {
+                    "richmond river rat": true
+                }
+            ]
+        },
+        "result": [
+            {
+                "play_song": "https://www.youtube.com/watch?v=vxBvxb4DDNA"
+            }
+        ]
     }
 ]
