@@ -30,7 +30,10 @@ class DiscordAPI(API, discord.Client):
         return payload.emoji
 
     def reactionMessage(self, payload):
-        return payload.message
+        return src.data.messages.Message(self, payload.message)
+
+    def messageID(self, payload):
+        return payload.id
 
     def clientName(self):
         return self.user.name
@@ -72,7 +75,7 @@ class DiscordAPI(API, discord.Client):
                 self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
 
     async def editMessage(self, message, newContent):
-        return await self.edit_message(message, newContent)
+        return await self.edit_message(message.payload, newContent)
 
     ################################################################################
     # on_ready
@@ -205,7 +208,7 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await self.send_message(message.channel, messageToSend)
-            
+ 
     ################################################################################
     # playSong
     #
@@ -227,7 +230,7 @@ class DiscordAPI(API, discord.Client):
             self.player.stop()
         self.player = await self.voice.create_ytdl_player(songToPlay)
         self.player.start()
-            
+    
     ################################################################################
     # stopAndDisconnect
     #

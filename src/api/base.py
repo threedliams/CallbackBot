@@ -26,7 +26,7 @@ class API(ABC):
 
         self.callbackData = {}
 
-        self.polls = []
+        self.polls = {}
 
         super().__init__()
 
@@ -52,6 +52,10 @@ class API(ABC):
 
     @abstractmethod
     def reactionMessage(self, payload):
+        pass
+
+    @abstractmethod
+    def messageID(self, payload):
         pass
 
     @abstractmethod
@@ -219,16 +223,16 @@ class API(ABC):
         message = self.reactionMessage(reaction)
 
         isPoll = False
-        savedPoll = None
-        for poll in self.polls:
-            if(self.content(message) == poll.content):
-                savedPoll = poll
+        for pollID in self.polls:
+            if(message.messageID == pollID):
                 isPoll = True
         if not(isPoll):
             return
 
         newPoll = await self.editMessage(message, src.data.polls.addVote(message, reaction, username))
-        self.polls.append(newPoll)
+        
+        # This either replaces the old poll with the new, or adds the new one
+        self.polls[message.messageID] = newPoll
 
     ################################################################################
     # onReactionRemove
@@ -248,15 +252,16 @@ class API(ABC):
         message = self.reactionMessage(reaction)
 
         isPoll = False
-        for poll in self.polls:
-            if(poll != None):
-                if(self.content(message) == poll.content):
-                    isPoll = True
+        for pollID in self.polls:
+            if(message.messageID == pollID):
+                isPoll = True
         if not(isPoll):
             return
 
         newPoll = await self.editMessage(message, src.data.polls.removeVote(message, reaction, username))
-        self.polls.append(newPoll)
+        
+        # This either replaces the old poll with the new, or adds the new one
+        self.polls[message.messageID] = newPoll
 
     ################################################################################
     # onReactionClear
@@ -276,15 +281,16 @@ class API(ABC):
         message = self.reactionMessage(reaction)
 
         isPoll = False
-
-        for poll in self.polls:
-            if(self.content(message) == poll.content):
+        for pollID in self.polls:
+            if(message.messageID == pollID):
                 isPoll = True
         if not(isPoll):
             return
 
         newPoll = await self.editMessage(message, src.data.polls.removeVote(message, reaction, username))
-        self.polls.append(newPoll)
+        
+        # This either replaces the old poll with the new, or adds the new one
+        self.polls[message.messageID] = newPoll
 
     ################################################################################
     # sendFile

@@ -24,6 +24,7 @@ class Message:
         self.username = api.authorName(payload)
         self.clientName = api.clientName()
         self.clientUser = api.clientUser()
+        self.messageID = api.messageID(payload)
 
 ################################################################################
 # saveMessage
