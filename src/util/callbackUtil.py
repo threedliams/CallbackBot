@@ -147,7 +147,7 @@ async def functionSwitcher(message):
     tokenizedMessage = message.tokenizedMessage
     if(len(tokenizedMessage) == 0 or message.author == message.clientUser):
         return
-    functionName = tokenizedMessage[0];
+    functionName = tokenizedMessage[0]
 
     functionOptions = {
         "!markov": src.app.markov,
@@ -163,9 +163,9 @@ async def functionSwitcher(message):
         sent_message = await message.api.sendMessage(message, functionOptions[functionName](message))
         sent_message = src.data.messages.Message(message.api, sent_message)
         if(functionName == "!poll"):
-            message.api.polls.append(src.data.polls.Poll(sent_message.content))
+            message.api.polls[sent_message.messageID] = src.data.polls.Poll(sent_message.content)
     else:
         for callback in message.api.callbackData:
             if(parseCallbackKey(tokenizedMessage, callback["key"])):
                 await parseCallbackResult(message, callback["result"])
-                break;
+                break
