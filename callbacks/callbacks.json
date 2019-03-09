@@ -9,6 +9,22 @@
     },
     {
         "key": {
+            "what do you want your icon to be": true
+        },
+        "result": [{
+            "send_message": "The one I have now is fine, thanks"
+        }]
+    },
+    {
+        "key": {
+            "condom": true
+        },
+        "result": [{
+            "send_message": "Come to my house for an afternoon, *you will use condoms*"
+        }]
+    },
+    {
+        "key": {
             "buzz me": true
         },
         "result": [{
@@ -142,7 +158,17 @@
     },
     {
         "key": {
-            "hot thomas": true
+            "+or": [
+                {
+                    "hot thomas": true
+                },
+                {
+                    "mcafee": true
+                },
+                {
+                    "macafee": true
+                }
+            ]
         },
         "result": [{
             "send_file": "./callbacks/hotthomas.jpg"
@@ -234,6 +260,20 @@
             },
             {
                 "send_file": "./callbacks/whywouldthey.png"
+            }
+        ]
+    },
+    {
+        "key": {
+            "+fuzzy": {
+                "match": "Beep boop bop you ever heard of a robot before?",
+                "threshold": "60",
+                "function": "token_sort_ratio"
+            }
+        },
+        "result": [
+            {
+                "send_message": "I don't even know what that means."
             }
         ]
     },
