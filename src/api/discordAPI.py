@@ -67,8 +67,8 @@ class DiscordAPI(API, discord.Client):
         return channel.id
 
     async def getLogs(self, channel):
-        async for log_message in self.logs_from(channel, limit=9999999):
-            if not(self.authorName(log_message) in list(self.liveChannelMap[self.channelID(channel)].keys())):
+        async for log_message in self.logs_from(channel, limit=10000):
+            if not(self.authorName(log_message) in self.liveChannelMap[self.channelID(channel)]):
                 #TODO: handle username conflicts (discriminator or id)
                 self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] = unidecode(self.content(log_message))
             else:

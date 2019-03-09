@@ -148,7 +148,7 @@ class API(ABC):
                         for fileName in os.listdir(rootFolder + underscoredServerName + "/" + underscoredChannelName):
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + fileName, 'r')
                             #TODO: handle people with . in their name
-                            self.savedChannelMap[self.channelID(channel)][fileName.split('.')[0]] = f.read()
+                            self.savedChannelMap[self.channelID(channel)][fileName.split('.')[0]] = "\n".join(f.readlines()[:10000])
         self.isSavedReady = True
 
         print("saved ready!")
