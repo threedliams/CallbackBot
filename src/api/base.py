@@ -18,8 +18,9 @@ class API(ABC):
 
         self.isSavedReady = False
         self.isLiveReady = False
-        self.savedChannelMap = {}
-        self.liveChannelMap = {}
+        self.savedChannelTextMap = {}
+        self.liveChannelTextMap = {}
+        self.markovModelCache = {}
 
         self.callbackData = {}
 
@@ -128,12 +129,12 @@ class API(ABC):
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     #TODO: channels with the same name on one server?
                     if(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
-                        if not(channel.id in list(self.savedChannelMap.keys())):
-                            self.savedChannelMap[self.channelID(channel)] = {}
+                        if not(channel.id in list(self.savedChannelTextMap.keys())):
+                            self.savedChannelTextMap[self.channelID(channel)] = {}
                         for fileName in os.listdir(rootFolder + underscoredServerName + "/" + underscoredChannelName):
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + fileName, 'r')
                             #TODO: handle people with . in their name
-                            self.savedChannelMap[self.channelID(channel)][fileName.split('.')[0]] = f.read()
+                            self.savedChannelTextMap[self.channelID(channel)][fileName.split('.')[0]] = f.read()
         self.isSavedReady = True
 
         print("saved ready!")
@@ -141,8 +142,8 @@ class API(ABC):
         #catch up to current logs
         for server in servers:
             for channel in self.channels(server):
-                if not(self.channelID(channel) in list(self.liveChannelMap.keys())):
-                    self.liveChannelMap[self.channelID(channel)] = {}
+                if not(self.channelID(channel) in list(self.liveChannelTextMap.keys())):
+                    self.liveChannelTextMap[self.channelID(channel)] = {}
                 await self.getLogs(channel)
 
         #save current logs for next time
@@ -156,12 +157,14 @@ class API(ABC):
                     if not(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
                         os.makedirs(rootFolder + underscoredServerName + "/" + underscoredChannelName)
                     if(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
-                        for username in self.liveChannelMap[self.channelID(channel)].keys():
+                        for username in self.liveChannelTextMap[self.channelID(channel)].keys():
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + username + ".txt", 'w')
-                            f.write(self.liveChannelMap[self.channelID(channel)][username])
-
-
+                            f.write(self.liveChannelTextMap[self.channelID(channel)][username])
         self.isLiveReady = True
+
+        for server in servers:
+            for channel in self.channels(server):
+                src.app.attemptMarkovCacheRefresh(self, channel.id, True)
 
         print("live ready!")
 
@@ -182,10 +185,12 @@ class API(ABC):
         await src.util.callbackUtil.functionSwitcher(message)
 
         if(self.isSavedReady and not self.isLiveReady):
-            src.data.messages.saveMessage(message, self.savedChannelMap)
+            src.data.messages.saveMessage(message, self.savedChannelTextMap)
 
         if(self.isLiveReady):
-            src.data.messages.saveMessage(message, self.liveChannelMap)
+            src.data.messages.saveMessage(message, self.liveChannelTextMap)
+
+        src.app.attemptMarkovCacheRefresh(message.api, message.channelID)
 
     ################################################################################
     # onReactionAdd

@@ -3,6 +3,87 @@ import re
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import random
+import datetime
+
+################################################################################
+# attemptMarkovCacheRefresh
+#
+# Tries to refresh the cache of markov models for each user in each channel.
+# Should only refresh the model cache for a user if it has expired (older than
+# one hour).
+#
+# Args:
+#
+#   api - the object representing the api this request came from
+#
+#   channelID - the channel ID for the user
+#
+#   force - set to true to force the cache to refresh even if it hasn't expired
+#
+# Returns - a markov setence in the form of a quote for the given user
+################################################################################
+def attemptMarkovCacheRefresh(api, channelID, force=False):
+    isSavedReady = api.isSavedReady
+    isLiveReady = api.isLiveReady
+
+    usermap = None
+
+    if(isLiveReady):
+        usermap = api.liveChannelTextMap[channelID]
+    elif(isSavedReady):
+        usermap = api.savedChannelTextMap[channelID]
+    else:
+        return "Sorry, still warming up! Give me a minute. You should only see this message the first time I join a channel."
+
+    if not channelID in api.markovModelCache:
+        api.markovModelCache[channelID] = {}
+
+    for username in usermap:
+        if not username in api.markovModelCache[channelID]:
+            api.markovModelCache[channelID][username] = {}
+            api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.today() - datetime.timedelta(1)
+        if force or (api.markovModelCache[channelID][username]['timestamp'] + datetime.timedelta(hours=1) < datetime.datetime.now()):
+            api.markovModelCache[channelID][username]['model'] = markovify.NewlineText(usermap[username])
+            api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.now()
+   
+################################################################################
+# getModel
+#
+# Gets the cached markov model for a given user. If the model is not cached, it
+# generates it immediately.
+#
+# Args:
+#
+#   api - the object representing the api this request came from
+#
+#   channelID - the channel ID for the user
+#
+#   username - the name of the user to get the model from
+#
+# Returns - a markov setence in the form of a quote for the given user
+################################################################################         
+def getModel(api, channelID, username):
+    if(api.isLiveReady):
+        usermap = api.liveChannelTextMap[channelID]
+    elif(api.isSavedReady):
+        usermap = api.savedChannelTextMap[channelID]
+    else:
+        return {}
+
+    cached = True
+    if not channelID in api.markovModelCache:
+        api.markovModelCache[channelID] = {}
+        cached = False
+    if not username in api.markovModelCache[channelID]:
+        api.markovModelCache[channelID][username] = {}
+        cached = False
+
+    # Doesn't exist in the cache at all. Expirations are ignored as they'll be updated anyways after the message is generated and sent.
+    if cached == False:
+        api.markovModelCache[channelID][username]['model'] = markovify.NewlineText(usermap[username])
+        api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.now()
+
+    return api.markovModelCache[channelID][username]['model']
 
 ################################################################################
 # markov
@@ -21,22 +102,21 @@ def markov(message):
     isLiveReady = message.api.isLiveReady
 
     #TODO: handle username vs other arguments better
-    #TODO: handle users with '+' in their name
+    #TODO: handle users with ' + ' in their name
     usernames = ' '.join(message.tokenizedMessage[1:]).split(' + ')
 
     usermap = None
 
 
     if(isLiveReady):
-        usermap = message.api.liveChannelMap[message.channelID]
+        usermap = message.api.liveChannelTextMap[message.channelID]
     elif(isSavedReady):
-        usermap = message.api.savedChannelMap[message.channelID]
+        usermap = message.api.savedChannelTextMap[message.channelID]
     else:
         return "Sorry, still warming up! Give me a minute. You should only see this message the first time I join a channel."
 
-
-    compiledLogs = ""
     byUsers = []
+    modelsByUser = {}
 
     for username in usernames:
         if username == "random":
@@ -53,16 +133,22 @@ def markov(message):
             for each_username in list(usermap.keys()):
                 if each_username == message.clientName:
                     continue
-                compiledLogs = compiledLogs + "\n" + usermap[each_username]
+                # compiledLogs = compiledLogs + "\n" + usermap[each_username]
+                modelsByUser[each_username] = getModel(message.api, message.channelID, each_username)
             byUsers.append("everyone")
         elif username == "me":
-            compiledLogs += usermap[message.username]
+            modelsByUser[message.username] = getModel(message.api, message.channelID, message.username)
             byUsers.append(message.username)
         else:
-            compiledLogs += usermap[username]
+            modelsByUser[username] = getModel(message.api, message.channelID, username)
             byUsers.append(username)
 
-    markov_model = markovify.NewlineText(compiledLogs)
+    # markov_model = markovify.NewlineText(compiledLogs)
+
+    if(len(modelsByUser) > 1):
+        markov_model = markovify.combine(modelsByUser.values())
+    else:
+        markov_model = list(modelsByUser.values())[0]
 
     newSentence = markov_model.make_sentence()
     #if we couldn't generate a sentence, try a few more times to get a valid one
