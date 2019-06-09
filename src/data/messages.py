@@ -40,12 +40,12 @@ class Message:
 # Returns - nothing
 ################################################################################
 def saveMessage(message, channelMap):
-    if not(message.channel.id in list(channelMap.keys())):
+    if not(message.channel.id in channelMap):
             channelMap[message.channel.id] = {}
 
     usermap = channelMap[message.channel.id]
 
-    if not(message.author.name in list(usermap.keys())):
+    if not(message.author.name in usermap):
         usermap[message.author.name] = unidecode(message.content)
     else:
         usermap[message.author.name] = usermap[message.author.name] + "\n" + unidecode(message.content)
