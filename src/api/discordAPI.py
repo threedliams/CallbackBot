@@ -68,11 +68,11 @@ class DiscordAPI(API, discord.Client):
 
     async def getLogs(self, channel):
         async for log_message in self.logs_from(channel, limit=10000):
-            if not(self.authorName(log_message) in self.liveChannelMap[self.channelID(channel)]):
+            if not(self.authorName(log_message) in self.liveChannelTextMap[self.channelID(channel)]):
                 #TODO: handle username conflicts (discriminator or id)
-                self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] = unidecode(self.content(log_message))
+                self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = unidecode(self.content(log_message))
             else:
-                self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
+                self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
 
     async def editMessage(self, message, newContent):
         return await self.edit_message(message.payload, newContent)

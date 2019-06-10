@@ -28,9 +28,9 @@ def markov(message):
 
 
     if(isLiveReady):
-        usermap = message.api.liveChannelMap[message.channelID]
+        usermap = message.api.liveChannelTextMap[message.channelID]
     elif(isSavedReady):
-        usermap = message.api.savedChannelMap[message.channelID]
+        usermap = message.api.savedChannelTextMap[message.channelID]
     else:
         return "Sorry, still warming up! Give me a minute. You should only see this message the first time I join a channel."
 
