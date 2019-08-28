@@ -387,5 +387,13 @@
                 "play_song": "https://www.youtube.com/watch?v=vxBvxb4DDNA"
             }
         ]
+    },
+    {
+        "key": {
+            "happy birthday": true
+        },
+        "result": [{
+            "add_reaction": "tada"
+        }]
     }
 ]
