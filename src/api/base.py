@@ -125,7 +125,7 @@ class API(ABC):
         for server in servers:
             underscoredServerName = self.serverName(server).replace(" ", "_")
             if(os.path.isdir(rootFolder + underscoredServerName)):
-                for channel in self.channels(server):
+                for channel in server.text_channels:
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     #TODO: channels with the same name on one server?
                     if(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
@@ -141,7 +141,7 @@ class API(ABC):
 
         #catch up to current logs
         for server in servers:
-            for channel in self.channels(server):
+            for channel in server.text_channels:
                 if not(self.channelID(channel) in list(self.liveChannelTextMap.keys())):
                     self.liveChannelTextMap[self.channelID(channel)] = {}
                 await self.getLogs(channel)
@@ -152,7 +152,7 @@ class API(ABC):
             if not(os.path.isdir(rootFolder + underscoredServerName)):
                 os.makedirs(rootFolder + underscoredServerName)
             if(os.path.isdir(rootFolder + underscoredServerName)):
-                for channel in self.channels(server):
+                for channel in server.text_channels:
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     if not(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
                         os.makedirs(rootFolder + underscoredServerName + "/" + underscoredChannelName)
@@ -163,7 +163,7 @@ class API(ABC):
         self.isLiveReady = True
 
         for server in servers:
-            for channel in self.channels(server):
+            for channel in server.text_channels:
                 src.app.attemptMarkovCacheRefresh(self, channel.id, True)
 
         print("live ready!")
