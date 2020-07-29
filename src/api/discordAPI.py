@@ -45,7 +45,7 @@ class DiscordAPI(API, discord.Client):
         return self.user
 
     def getServers(self):
-        return self.servers
+        return self.guilds
 
     def getVoiceChannels(self, server):
         voice_channels = []
@@ -67,15 +67,15 @@ class DiscordAPI(API, discord.Client):
         return channel.id
 
     async def getLogs(self, channel):
-        async for log_message in self.logs_from(channel, limit=10000):
-            if not(self.authorName(log_message) in self.liveChannelTextMap[self.channelID(channel)]):
+        async for log_message in channel.history(limit=9999999):
+            if not(self.authorName(log_message) in list(self.liveChannelTextMap[self.channelID(channel)].keys())):
                 #TODO: handle username conflicts (discriminator or id)
                 self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = unidecode(self.content(log_message))
             else:
                 self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
 
     async def editMessage(self, message, newContent):
-        return await self.edit_message(message.payload, newContent)
+        return await message.payload.edit(newContent)
 
     ################################################################################
     # on_ready
@@ -171,7 +171,7 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def sendFile(self, message, fileToSend):
-        await self.send_file(message.payload.channel, fileToSend)
+        await message.payload.channel.send(file=fileToSend)
 
     ################################################################################
     # addReaction
@@ -191,8 +191,8 @@ class DiscordAPI(API, discord.Client):
         global emojiDict
         #replace emoji result with actual unicode
         if(reactionToAdd in src.data.emoji.emojiDict.keys()):
-            await self.add_reaction(message.payload, src.data.emoji.emojiDict[reactionToAdd])
-            
+            await message.payload.add_reaction(src.data.emoji.emojiDict[reactionToAdd])
+
     ################################################################################
     # sendMessage
     #
@@ -207,7 +207,7 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def sendMessage(self, message, messageToSend):
-        return await self.send_message(message.channel, messageToSend)
+        return await message.channel.send(content=messageToSend)
  
     ################################################################################
     # playSong
@@ -223,13 +223,14 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def playSong(self, message, songToPlay):
-        if not self.voice:
-            voice_channel = self.getVoiceChannels(message.channel.server)[0]
-            self.voice = await self.join_voice_channel(voice_channel)
-        if self.player:
-            self.player.stop()
-        self.player = await self.voice.create_ytdl_player(songToPlay)
-        self.player.start()
+        return await message.channel.send("Sorry, still fixing! Would have played " + songToPlay)
+        # if not self.voice:
+        #     voice_channel = self.getVoiceChannels(message.channel.server)[0]
+        #     self.voice = await self.join_voice_channel(voice_channel)
+        # if self.player:
+        #     self.player.stop()
+        # self.player = await self.voice.create_ytdl_player(songToPlay)
+        # self.player.start()
     
     ################################################################################
     # stopAndDisconnect

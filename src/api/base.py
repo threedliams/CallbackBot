@@ -21,6 +21,7 @@ class API(ABC):
         self.isLiveReady = False
         self.savedChannelTextMap = {}
         self.liveChannelTextMap = {}
+        self.markovModelCache = {}
 
         self.birdUpText = ""
 
@@ -139,24 +140,24 @@ class API(ABC):
         for server in servers:
             underscoredServerName = self.serverName(server).replace(" ", "_")
             if(os.path.isdir(rootFolder + underscoredServerName)):
-                for channel in self.channels(server):
+                for channel in server.text_channels:
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     #TODO: channels with the same name on one server?
                     if(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
-                        if not(channel.id in self.savedChannelTextMap):
+                        if not(channel.id in list(self.savedChannelTextMap.keys())):
                             self.savedChannelTextMap[self.channelID(channel)] = {}
                         for fileName in os.listdir(rootFolder + underscoredServerName + "/" + underscoredChannelName):
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + fileName, 'r')
                             #TODO: handle people with . in their name
-                            self.savedChannelTextMap[self.channelID(channel)][fileName.split('.')[0]] = "\n".join(f.readlines()[:10000])
+                            self.savedChannelTextMap[self.channelID(channel)][fileName.split('.')[0]] = f.read()
         self.isSavedReady = True
 
         print("saved ready!")
 
         #catch up to current logs
         for server in servers:
-            for channel in self.channels(server):
-                if not(self.channelID(channel) in self.liveChannelTextMap):
+            for channel in server.text_channels:
+                if not(self.channelID(channel) in list(self.liveChannelTextMap.keys())):
                     self.liveChannelTextMap[self.channelID(channel)] = {}
                 await self.getLogs(channel)
 
@@ -166,7 +167,7 @@ class API(ABC):
             if not(os.path.isdir(rootFolder + underscoredServerName)):
                 os.makedirs(rootFolder + underscoredServerName)
             if(os.path.isdir(rootFolder + underscoredServerName)):
-                for channel in self.channels(server):
+                for channel in server.text_channels:
                     underscoredChannelName = self.channelName(channel).replace(" ", "_")
                     if not(os.path.isdir(rootFolder + underscoredServerName + "/" + underscoredChannelName)):
                         os.makedirs(rootFolder + underscoredServerName + "/" + underscoredChannelName)
@@ -175,8 +176,11 @@ class API(ABC):
                             f = open(rootFolder + underscoredServerName + "/" + underscoredChannelName + "/" + username + ".txt", 'w')
                             f.write(self.liveChannelTextMap[self.channelID(channel)][username])
 
-
         self.isLiveReady = True
+
+        for server in servers:
+            for channel in server.text_channels:
+                src.app.attemptMarkovCacheRefresh(self, channel.id, True)
 
         print("live ready!")
 
@@ -204,6 +208,8 @@ class API(ABC):
 
         if(self.isLiveReady):
             src.data.messages.saveMessage(message, self.liveChannelTextMap)
+
+        src.app.attemptMarkovCacheRefresh(message.api, message.channelID)
 
     ################################################################################
     # onReactionAdd
