@@ -146,7 +146,7 @@ def markov(message):
     # markov_model = markovify.NewlineText(compiledLogs)
 
     if(len(modelsByUser) > 1):
-        markov_model = markovify.combine(modelsByUser.values())
+        markov_model = markovify.combine(list(modelsByUser.values()))
     else:
         markov_model = list(modelsByUser.values())[0]
 
