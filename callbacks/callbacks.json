@@ -1,14 +1,18 @@
 [
     {
         "key": {
-            "example": true
+            "+or": [
+                {
+                    "river rat": true
+                },
+                {
+                    "richmond river rat": true
+                }
+            ]
         },
         "result": [
             {
-                "send_message": "This is an example callback!"
-            },
-            {
-                "add_reaction": "call_me"
+                "play_song": "https://www.youtube.com/watch?v=vxBvxb4DDNA"
             }
         ]
     }

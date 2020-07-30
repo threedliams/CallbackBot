@@ -5,6 +5,7 @@ from unidecode import unidecode
 from src.api.base import API
 from src.data.messages import Message
 import src.data.emoji
+import youtube_dl
 
 
 class DiscordAPI(API, discord.Client):
@@ -25,6 +26,9 @@ class DiscordAPI(API, discord.Client):
 
     def messageChannel(self, payload):
         return payload.channel
+
+    def messageServer(self, payload):
+        return payload.guild
 
     def emoji(self, payload):
         return payload.emoji
@@ -48,11 +52,7 @@ class DiscordAPI(API, discord.Client):
         return self.guilds
 
     def getVoiceChannels(self, server):
-        voice_channels = []
-        for channel in self.get_all_channels():
-            if channel.server == server and channel.type == discord.ChannelType.voice:
-                voice_channels.append(channel)
-        return voice_channels
+        return server.voice_channels
 
     def serverName(self, server):
         return server.name
@@ -223,14 +223,28 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def playSong(self, message, songToPlay):
-        return await message.channel.send("Sorry, still fixing! Would have played " + songToPlay)
-        # if not self.voice:
-        #     voice_channel = self.getVoiceChannels(message.channel.server)[0]
-        #     self.voice = await self.join_voice_channel(voice_channel)
-        # if self.player:
-        #     self.player.stop()
-        # self.player = await self.voice.create_ytdl_player(songToPlay)
-        # self.player.start()
+        if not self.voice:
+            voice_channel = self.getVoiceChannels(message.server)[0]
+            self.voice = await voice_channel.connect()
+        if self.voice.is_playing():
+            self.voice.stop()
+
+        ytdl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+        with youtube_dl.YoutubeDL(ytdl_opts) as ytdl:
+            print("extracting: ")
+            info_dict = ytdl.extract_info(songToPlay)
+            song = ytdl.prepare_filename(info_dict)
+            song = "".join([song.split(".")[0], ".mp3"])
+            print("done extracting")
+        print("attempting to play")
+        self.voice.play(discord.FFmpegPCMAudio(song))
     
     ################################################################################
     # stopAndDisconnect
@@ -245,9 +259,6 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def stopAndDisconnect(self, message):
         if self.voice:
-            if self.player:
-                self.player.stop()
             if self.voice.is_connected():
                 await self.voice.disconnect()
             self.voice = None
-            self.player = None
