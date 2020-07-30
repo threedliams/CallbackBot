@@ -14,6 +14,12 @@ class DiscordAPI(API, discord.Client):
         self.apiName = "discord"
         self.voice = None
         self.player = None
+        print("Opus?")
+        print(discord.opus.is_loaded())
+        discord.opus.load_opus("C:\\ffmpeg\\bin\\opusdec.exe")
+        print("Opus?")
+        print(discord.opus.is_loaded())
+
 
     def author(self, payload):
         return payload.author
@@ -233,18 +239,22 @@ class DiscordAPI(API, discord.Client):
             'format': 'bestaudio/best',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
+                # 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
+        }
+
+        ffmpeg_options = {
+            'options': '-vn'
         }
         with youtube_dl.YoutubeDL(ytdl_opts) as ytdl:
             print("extracting: ")
             info_dict = ytdl.extract_info(songToPlay)
             song = ytdl.prepare_filename(info_dict)
-            song = "".join([song.split(".")[0], ".mp3"])
+            song = "".join([song.split(".")[0], ".opus"])
             print("done extracting")
         print("attempting to play")
-        self.voice.play(discord.FFmpegPCMAudio(song))
+        self.voice.play(discord.FFmpegOpusAudio(song, **ffmpeg_options))
     
     ################################################################################
     # stopAndDisconnect
