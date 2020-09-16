@@ -81,7 +81,7 @@ class DiscordAPI(API, discord.Client):
                 self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
 
     async def editMessage(self, message, newContent):
-        return await message.payload.edit(newContent)
+        return await message.payload.edit(content=newContent)
 
     ################################################################################
     # on_ready
@@ -177,7 +177,7 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def sendFile(self, message, fileToSend):
-        await message.payload.channel.send(file=fileToSend)
+        await message.payload.channel.send(file=discord.File(fileToSend))
 
     ################################################################################
     # addReaction
