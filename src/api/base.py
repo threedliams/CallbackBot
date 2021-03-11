@@ -99,14 +99,6 @@ class API(ABC):
     async def editMessage(self, message, newContent):
         pass
 
-    @abstractmethod
-    async def playSong(self, message, songToPlay):
-        pass
-
-    @abstractmethod
-    async def stopAndDisconnect(self, message):
-        pass
-
     ################################################################################
     # onReady
     #
