@@ -152,10 +152,10 @@ def markov(message):
 
     newSentence = markov_model.make_sentence()
     #if we couldn't generate a sentence, try a few more times to get a valid one
-    if(newSentence is None):
-        for i in range(5):
+    if(newSentence is None) or (testForByline(newSentence, message.clientName, usernames, usermap)):
+        for i in range(50):
             newSentence = markov_model.make_sentence()
-            if not(newSentence is None):
+            if not(newSentence is None) and not (testForByline(newSentence, message.clientName, usernames, usermap)):
                 break
 
     byline = ""
@@ -164,10 +164,41 @@ def markov(message):
             byline += " and "
         byline += byUsers[i]
 
-    if(newSentence is None):
+    if(newSentence is None) or (testForByline(newSentence, message.clientName, usernames, usermap)):
         return "Whoops, I tried a few times but it looks like " + username + " needs to talk more before I can generate a good sentence. Try someone else!"
     else:
         return "\"" + newSentence + "\"\n-" + byline
+
+################################################################################
+# testForByline
+#
+# Checks if a generated message looks like "-user and user and user" in case
+# the bot accidentally generates one when you !markov it
+#
+# Args:
+#
+#   newSentence - the candidate sentence
+#
+#   clientName - the bot's name
+#
+#   usernames - the byline of the message being generated
+#
+#   usermap - the map of all the users associated with the channel
+#
+# Return - a string of a randomized response
+################################################################################
+def testForByline(newSentence, clientName, usernames, usermap):
+    if not(newSentence is None):
+        if(clientName in usernames or "everyone" in usernames or "random" in usernames):
+            #try generating a sentence that isn't like "-user and user and user"
+            test_string = newSentence[1:]
+            split_test_string = test_string.split(' and ')
+            if(len(split_test_string) > 1):
+                for split_piece in split_test_string:
+                    if not(split_piece in list(usermap.keys())) and not split_piece == "everyone":
+                        return False
+                return True
+    return False
 
 ################################################################################
 # magic
