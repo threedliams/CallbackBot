@@ -145,7 +145,7 @@ async def run_func(message, functionToRun):
 ################################################################################
 async def bird_up(message):
     text_model = markovify.NewlineText(message.api.birdUpText)
-    await message.api.send_message(message.channel, text_model.make_sentence())
+    await message.api.sendMessage(message.channel, text_model.make_sentence())
 
 ################################################################################
 # functionSwitcher
