@@ -5,6 +5,7 @@ from unidecode import unidecode
 from src.api.base import API
 from src.data.messages import Message
 import src.data.emoji
+import youtube_dl
 
 
 class DiscordAPI(API, discord.Client):
@@ -13,6 +14,12 @@ class DiscordAPI(API, discord.Client):
         self.apiName = "discord"
         self.voice = None
         self.player = None
+        print("Opus?")
+        print(discord.opus.is_loaded())
+        discord.opus.load_opus("C:\\ffmpeg\\bin\\opusdec.exe")
+        print("Opus?")
+        print(discord.opus.is_loaded())
+
 
     def author(self, payload):
         return payload.author
@@ -25,6 +32,9 @@ class DiscordAPI(API, discord.Client):
 
     def messageChannel(self, payload):
         return payload.channel
+
+    def messageServer(self, payload):
+        return payload.guild
 
     def emoji(self, payload):
         return payload.emoji
@@ -48,11 +58,7 @@ class DiscordAPI(API, discord.Client):
         return self.guilds
 
     def getVoiceChannels(self, server):
-        voice_channels = []
-        for channel in self.get_all_channels():
-            if channel.server == server and channel.type == discord.ChannelType.voice:
-                voice_channels.append(channel)
-        return voice_channels
+        return server.voice_channels
 
     def serverName(self, server):
         return server.name
@@ -75,7 +81,7 @@ class DiscordAPI(API, discord.Client):
                 self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] = self.liveChannelTextMap[self.channelID(channel)][self.authorName(log_message)] + "\n" + unidecode(self.content(log_message))
 
     async def editMessage(self, message, newContent):
-        return await message.payload.edit(newContent)
+        return await message.payload.edit(content=newContent)
 
     ################################################################################
     # on_ready
@@ -171,7 +177,7 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def sendFile(self, message, fileToSend):
-        await message.payload.channel.send(file=fileToSend)
+        await message.payload.channel.send(file=discord.File(fileToSend))
 
     ################################################################################
     # addReaction
@@ -208,46 +214,3 @@ class DiscordAPI(API, discord.Client):
     ################################################################################
     async def sendMessage(self, message, messageToSend):
         return await message.channel.send(content=messageToSend)
- 
-    ################################################################################
-    # playSong
-    #
-    # Joins your first voice channel and plays a song
-    #
-    # Args:
-    #
-    #   message - a Message object
-    #
-    #   songToPlay - a url to download and play from youtube
-    #
-    # Return - nothing
-    ################################################################################
-    async def playSong(self, message, songToPlay):
-        return await message.channel.send("Sorry, still fixing! Would have played " + songToPlay)
-        # if not self.voice:
-        #     voice_channel = self.getVoiceChannels(message.channel.server)[0]
-        #     self.voice = await self.join_voice_channel(voice_channel)
-        # if self.player:
-        #     self.player.stop()
-        # self.player = await self.voice.create_ytdl_player(songToPlay)
-        # self.player.start()
-    
-    ################################################################################
-    # stopAndDisconnect
-    #
-    # Stops playing a song and disconnects from the voice channel
-    #
-    # Args:
-    #
-    #   message - a Message object
-    #
-    # Return - nothing
-    ################################################################################
-    async def stopAndDisconnect(self, message):
-        if self.voice:
-            if self.player:
-                self.player.stop()
-            if self.voice.is_connected():
-                await self.voice.disconnect()
-            self.voice = None
-            self.player = None
