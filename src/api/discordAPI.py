@@ -5,20 +5,12 @@ from unidecode import unidecode
 from src.api.base import API
 from src.data.messages import Message
 import src.data.emoji
-import youtube_dl
 
 
 class DiscordAPI(API, discord.Client):
     def __init__(self, token):
         super().__init__(token)
         self.apiName = "discord"
-        self.voice = None
-        self.player = None
-        print("Opus?")
-        print(discord.opus.is_loaded())
-        discord.opus.load_opus("C:\\ffmpeg\\bin\\opusdec.exe")
-        print("Opus?")
-        print(discord.opus.is_loaded())
 
 
     def author(self, payload):
