@@ -271,9 +271,14 @@ def dalle(message):
         size="1024x1024"
     )
     image_url = response['data'][0]['url']
+    last_part = image_url.split('/')[-1]
     image_data = requests.get(image_url).content
 
-    return image_data
+    file_name = './tmp/' + last_part
+    with open(file_name, 'w') as file:
+        file.write(image_data)
+
+    return file_name
 
 ################################################################################
 # fuzzyMatch
