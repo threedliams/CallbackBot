@@ -170,13 +170,17 @@ async def functionSwitcher(message):
         "!magic": src.app.magic,
         "!poll": src.data.polls.createPoll,
         "!roll": src.app.roll,
+        "!dalle": src.app.dalle,
     }
 
     if(functionName in functionOptions.keys()):
-        sent_message = await message.api.sendMessage(message, functionOptions[functionName](message))
-        sent_message = src.data.messages.Message(message.api, sent_message)
-        if(functionName == "!poll"):
-            message.api.polls[sent_message.messageID] = src.data.polls.Poll(sent_message.content)
+        if (functionName != "!dalle"):
+            sent_message = await message.api.sendMessage(message, functionOptions[functionName](message))
+            sent_message = src.data.messages.Message(message.api, sent_message)
+            if(functionName == "!poll"):
+                message.api.polls[sent_message.messageID] = src.data.polls.Poll(sent_message.content)
+        else:
+            await message.api.sendFile(message, functionOptions[functionName](message))
     else:
         for callback in message.api.callbackData:
             if(parseCallbackKey(tokenizedMessage, callback["key"])):

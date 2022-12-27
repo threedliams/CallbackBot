@@ -4,6 +4,8 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import random
 import datetime
+import openai
+import requests
 
 ################################################################################
 # attemptMarkovCacheRefresh
@@ -260,6 +262,18 @@ def roll(message):
     rollText += ("= " + str(rollTotal))
 
     return rollText
+
+def dalle(message):
+    prompt = message.tokenizedMessage[1:]
+    reponse = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size="1024x1024"
+    )
+    image_url = response['data'][0]['url']
+    image_data = requests.get(image_url).content
+
+    return image_data
 
 ################################################################################
 # fuzzyMatch

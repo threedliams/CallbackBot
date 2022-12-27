@@ -1,5 +1,7 @@
 import discord
 import json
+import openai
+import os
 
 from src.api.discordAPI import DiscordAPI
 
@@ -12,6 +14,13 @@ with open(configFile) as data_file:
 apiOptions = {
     "discord": DiscordAPI,
 }
+
+openaiKey = os.getenv("OPENAI_API_KEY")
+if (openaiKey):
+    print("Successfully imported OpenAI API key.")
+    openai.api_key = openaiKey
+else:
+    print("Error pulling OpenAI API key from environment variables. Key may be missing.")
 
 apis = []
 #starts up the clients
