@@ -265,7 +265,7 @@ def roll(message):
 
 def dalle(message):
     prompt = " ".join(message.tokenizedMessage[1:])
-    reponse = openai.Image.create(
+    response = openai.Image.create(
         prompt=prompt,
         n=1,
         size="1024x1024"
