@@ -11,7 +11,7 @@ import src.data.polls
 
 
 class API(ABC):
-    def __init__(self, token):
+    def __init__(self, token, intents):
         self.apiName = ""
 
         self.client = None
@@ -26,7 +26,7 @@ class API(ABC):
 
         self.polls = {}
 
-        super().__init__()
+        super().__init__(intents=intents)
 
     @abstractmethod
     def author(self, payload):
