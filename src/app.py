@@ -274,8 +274,8 @@ def dalle(message):
     last_part = image_url.split('/')[-1]
     image_data = requests.get(image_url).content
 
-    file_name = './tmp/' + last_part
-    with open(file_name, 'w') as file:
+    file_name = './tmp/' + last_part + '.png'
+    with open(file_name, 'wb') as file:
         file.write(image_data)
 
     return file_name
