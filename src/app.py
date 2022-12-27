@@ -264,7 +264,7 @@ def roll(message):
     return rollText
 
 def dalle(message):
-    prompt = message.tokenizedMessage[1:]
+    prompt = " ".join(message.tokenizedMessage[1:])
     reponse = openai.Image.create(
         prompt=prompt,
         n=1,
