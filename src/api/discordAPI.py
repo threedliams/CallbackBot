@@ -9,7 +9,7 @@ import src.data.emoji
 
 class DiscordAPI(API, discord.Client):
     def __init__(self, token):
-        super().__init__(token)
+        super().__init__(token, intents=discord.Intents.all())
         self.apiName = "discord"
 
 
