@@ -6,6 +6,7 @@ import random
 import datetime
 import openai
 import requests
+import base64
 
 ################################################################################
 # attemptMarkovCacheRefresh
@@ -266,15 +267,18 @@ def roll(message):
 def dalle(message):
     prompt = " ".join(message.tokenizedMessage[1:])
     response = openai.Image.create(
+        model="gpt-image-1.5",
         prompt=prompt,
         n=1,
-        size="1024x1024"
+        size="1024x1024",
+        quality="high",
     )
-    image_url = response['data'][0]['url']
-    last_part = image_url.split('/')[-1]
-    image_data = requests.get(image_url).content
+    #image_url = response['data'][0]['url']
+    #last_part = image_url.split('/')[-1]
+    #image_data = requests.get(image_url).content
+    image_data = base64.b64decode(response['data'][0]['b64_json'])
 
-    file_name = './tmp/' + last_part + '.png'
+    file_name = './tmp/' + str(response['created']) + '.png'
     with open(file_name, 'wb') as file:
         file.write(image_data)
 
