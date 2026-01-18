@@ -285,7 +285,7 @@ def dalle(message):
 
         return file_name, None
     except Exception as e:
-        randint = random.randint(1, 9)
+        randint = random.randint(1, 12)
         return './errors/error' + str(randint) + '.jpg', str(e)
 
 
