@@ -169,7 +169,7 @@ class DiscordAPI(API, discord.Client):
     # Return - nothing
     ################################################################################
     async def sendFile(self, message, fileToSend):
-        await message.payload.channel.send(content=message, file=discord.File(fileToSend))
+        await message.payload.channel.send(file=discord.File(fileToSend))
 
     ################################################################################
     # addReaction
