@@ -140,3 +140,6 @@ $RECYCLE.BIN/
 
 config.json
 .vscode/
+pyvenv.cfg
+Scripts/**
+Lib/**

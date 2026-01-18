@@ -180,7 +180,8 @@ async def functionSwitcher(message):
             if(functionName == "!poll"):
                 message.api.polls[sent_message.messageID] = src.data.polls.Poll(sent_message.content)
         else:
-            await message.api.sendFile(message, functionOptions[functionName](message))
+            img, msg = functionOptions[functionName](message)
+            await message.api.sendFile(msg,img)
     else:
         for callback in message.api.callbackData:
             if(parseCallbackKey(tokenizedMessage, callback["key"])):
