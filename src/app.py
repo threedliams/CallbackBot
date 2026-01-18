@@ -48,7 +48,7 @@ def attemptMarkovCacheRefresh(api, channelID, force=False):
         if force or (api.markovModelCache[channelID][username]['timestamp'] + datetime.timedelta(hours=1) < datetime.datetime.now()):
             api.markovModelCache[channelID][username]['model'] = markovify.NewlineText(usermap[username])
             api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.now()
-   
+
 ################################################################################
 # getModel
 #
@@ -64,7 +64,7 @@ def attemptMarkovCacheRefresh(api, channelID, force=False):
 #   username - the name of the user to get the model from
 #
 # Returns - a markov setence in the form of a quote for the given user
-################################################################################         
+################################################################################
 def getModel(api, channelID, username):
     if(api.isLiveReady):
         usermap = api.liveChannelTextMap[channelID]
@@ -265,24 +265,29 @@ def roll(message):
     return rollText
 
 def dalle(message):
-    prompt = " ".join(message.tokenizedMessage[1:])
-    response = openai.Image.create(
-        model="gpt-image-1.5",
-        prompt=prompt,
-        n=1,
-        size="1024x1024",
-        quality="high",
-    )
-    #image_url = response['data'][0]['url']
-    #last_part = image_url.split('/')[-1]
-    #image_data = requests.get(image_url).content
-    image_data = base64.b64decode(response['data'][0]['b64_json'])
+    try:
+        prompt = " ".join(message.tokenizedMessage[1:])
+        response = openai.Image.create(
+            model="gpt-image-1.5",
+            prompt=prompt,
+            n=1,
+            size="1024x1024",
+            quality="high",
+        )
+        #image_url = response['data'][0]['url']
+        #last_part = image_url.split('/')[-1]
+        #image_data = requests.get(image_url).content
+        image_data = base64.b64decode(response['data'][0]['b64_json'])
 
-    file_name = './tmp/' + str(response['created']) + '.png'
-    with open(file_name, 'wb') as file:
-        file.write(image_data)
+        file_name = './tmp/' + str(response['created']) + '.png'
+        with open(file_name, 'wb') as file:
+            file.write(image_data)
 
-    return file_name
+        return file_name, None
+    except Exception as e:
+        randint = random.randint(1, 9)
+        return './errors/error' + str(randint) + '.jpg', str(e)
+
 
 ################################################################################
 # fuzzyMatch
@@ -290,7 +295,7 @@ def dalle(message):
 # Generates a random magic 8 ball response
 #
 # Args:
-#   
+#
 #   inputStr - the string to search for
 #
 #   matchingStr - the string to match against
