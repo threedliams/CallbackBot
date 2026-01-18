@@ -283,10 +283,10 @@ def dalle(message):
         with open(file_name, 'wb') as file:
             file.write(image_data)
 
-        return file_name, None
-    except Exception as e:
+        return file_name
+    except:
         randint = random.randint(1, 12)
-        return './errors/error' + str(randint) + '.jpg', str(e)
+        return './errors/error' + str(randint) + '.jpg'
 
 
 ################################################################################
