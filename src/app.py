@@ -1,11 +1,9 @@
 import markovify
 import re
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 import random
 import datetime
 import openai
-import requests
 import base64
 
 ################################################################################
@@ -274,9 +272,6 @@ def dalle(message):
             size="1024x1024",
             quality="high",
         )
-        #image_url = response['data'][0]['url']
-        #last_part = image_url.split('/')[-1]
-        #image_data = requests.get(image_url).content
         image_data = base64.b64decode(response['data'][0]['b64_json'])
 
         file_name = './tmp/' + str(response['created']) + '.png'
