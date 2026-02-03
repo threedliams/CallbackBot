@@ -9,3 +9,4 @@ handle emojis better
 handle emojis as keys
 more graceful errors
 handle connection change crashing the bot -- wrapper?
+cdk package

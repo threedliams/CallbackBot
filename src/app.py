@@ -3,8 +3,13 @@ import re
 from fuzzywuzzy import fuzz
 import random
 import datetime
-import openai
 import base64
+import openai
+from openai import AsyncOpenAI
+
+client = AsyncOpenAI(
+    api_key=openai.api_key
+)
 
 ################################################################################
 # attemptMarkovCacheRefresh
@@ -262,19 +267,18 @@ def roll(message):
 
     return rollText
 
-def dalle(message):
+async def dalle(message):
     try:
         prompt = " ".join(message.tokenizedMessage[1:])
-        response = openai.Image.create(
+        response = await client.images.generate(
             model="gpt-image-1.5",
             prompt=prompt,
             n=1,
-            size="1024x1024",
             quality="high",
         )
-        image_data = base64.b64decode(response['data'][0]['b64_json'])
+        image_data = base64.b64decode(response.data[0].b64_json)
 
-        file_name = './tmp/' + str(response['created']) + '.png'
+        file_name = './tmp/' + str(response.created) + '.png'
         with open(file_name, 'wb') as file:
             file.write(image_data)
 
