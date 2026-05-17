@@ -1,15 +1,15 @@
-import markovify
-import re
-from fuzzywuzzy import fuzz
-import random
-import datetime
 import base64
+import datetime
+import random
+import re
+
+import markovify
 import openai
+from fuzzywuzzy import fuzz
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI(
-    api_key=openai.api_key
-)
+client = AsyncOpenAI(api_key=openai.api_key)
+
 
 ################################################################################
 # attemptMarkovCacheRefresh
@@ -34,9 +34,9 @@ def attemptMarkovCacheRefresh(api, channelID, force=False):
 
     usermap = None
 
-    if(isLiveReady):
+    if isLiveReady:
         usermap = api.liveChannelTextMap[channelID]
-    elif(isSavedReady):
+    elif isSavedReady:
         usermap = api.savedChannelTextMap[channelID]
     else:
         return "Sorry, still warming up! Give me a minute. You should only see this message the first time I join a channel."
@@ -47,10 +47,21 @@ def attemptMarkovCacheRefresh(api, channelID, force=False):
     for username in usermap:
         if not username in api.markovModelCache[channelID]:
             api.markovModelCache[channelID][username] = {}
-            api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.today() - datetime.timedelta(1)
-        if force or (api.markovModelCache[channelID][username]['timestamp'] + datetime.timedelta(hours=1) < datetime.datetime.now()):
-            api.markovModelCache[channelID][username]['model'] = markovify.NewlineText(usermap[username])
-            api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.now()
+            api.markovModelCache[channelID][username]["timestamp"] = (
+                datetime.datetime.today() - datetime.timedelta(1)
+            )
+        if force or (
+            api.markovModelCache[channelID][username]["timestamp"]
+            + datetime.timedelta(hours=1)
+            < datetime.datetime.now()
+        ):
+            api.markovModelCache[channelID][username]["model"] = markovify.NewlineText(
+                usermap[username]
+            )
+            api.markovModelCache[channelID][username]["timestamp"] = (
+                datetime.datetime.now()
+            )
+
 
 ################################################################################
 # getModel
@@ -69,9 +80,9 @@ def attemptMarkovCacheRefresh(api, channelID, force=False):
 # Returns - a markov setence in the form of a quote for the given user
 ################################################################################
 def getModel(api, channelID, username):
-    if(api.isLiveReady):
+    if api.isLiveReady:
         usermap = api.liveChannelTextMap[channelID]
-    elif(api.isSavedReady):
+    elif api.isSavedReady:
         usermap = api.savedChannelTextMap[channelID]
     else:
         return {}
@@ -86,10 +97,13 @@ def getModel(api, channelID, username):
 
     # Doesn't exist in the cache at all. Expirations are ignored as they'll be updated anyways after the message is generated and sent.
     if cached == False:
-        api.markovModelCache[channelID][username]['model'] = markovify.NewlineText(usermap[username])
-        api.markovModelCache[channelID][username]['timestamp'] = datetime.datetime.now()
+        api.markovModelCache[channelID][username]["model"] = markovify.NewlineText(
+            usermap[username]
+        )
+        api.markovModelCache[channelID][username]["timestamp"] = datetime.datetime.now()
 
-    return api.markovModelCache[channelID][username]['model']
+    return api.markovModelCache[channelID][username]["model"]
+
 
 ################################################################################
 # markov
@@ -107,16 +121,15 @@ def markov(message):
     isSavedReady = message.api.isSavedReady
     isLiveReady = message.api.isLiveReady
 
-    #TODO: handle username vs other arguments better
-    #TODO: handle users with ' + ' in their name
-    usernames = ' '.join(message.tokenizedMessage[1:]).split(' + ')
+    # TODO: handle username vs other arguments better
+    # TODO: handle users with ' + ' in their name
+    usernames = " ".join(message.tokenizedMessage[1:]).split(" + ")
 
     usermap = None
 
-
-    if(isLiveReady):
+    if isLiveReady:
         usermap = message.api.liveChannelTextMap[message.channelID]
-    elif(isSavedReady):
+    elif isSavedReady:
         usermap = message.api.savedChannelTextMap[message.channelID]
     else:
         return "Sorry, still warming up! Give me a minute. You should only see this message the first time I join a channel."
@@ -133,17 +146,27 @@ def markov(message):
             else:
                 username = list(usermap.keys())[randomUser]
 
-        if not(username in list(usermap.keys())) and not (username == "everyone" or username == "me"):
-            return "Sorry I couldn't find a user named '" + username + "'. Usage: !markov [username]"
+        if not (username in list(usermap.keys())) and not (
+            username == "everyone" or username == "me"
+        ):
+            return (
+                "Sorry I couldn't find a user named '"
+                + username
+                + "'. Usage: !markov [username]"
+            )
         elif username == "everyone":
             for each_username in list(usermap.keys()):
                 if each_username == message.clientName:
                     continue
                 # compiledLogs = compiledLogs + "\n" + usermap[each_username]
-                modelsByUser[each_username] = getModel(message.api, message.channelID, each_username)
+                modelsByUser[each_username] = getModel(
+                    message.api, message.channelID, each_username
+                )
             byUsers.append("everyone")
         elif username == "me":
-            modelsByUser[message.username] = getModel(message.api, message.channelID, message.username)
+            modelsByUser[message.username] = getModel(
+                message.api, message.channelID, message.username
+            )
             byUsers.append(message.username)
         else:
             modelsByUser[username] = getModel(message.api, message.channelID, username)
@@ -151,29 +174,40 @@ def markov(message):
 
     # markov_model = markovify.NewlineText(compiledLogs)
 
-    if(len(modelsByUser) > 1):
+    if len(modelsByUser) > 1:
         markov_model = markovify.combine(list(modelsByUser.values()))
     else:
         markov_model = list(modelsByUser.values())[0]
 
     newSentence = markov_model.make_sentence()
-    #if we couldn't generate a sentence, try a few more times to get a valid one
-    if(newSentence is None) or (testForByline(newSentence, message.clientName, usernames, usermap)):
+    # if we couldn't generate a sentence, try a few more times to get a valid one
+    if (newSentence is None) or (
+        testForByline(newSentence, message.clientName, usernames, usermap)
+    ):
         for i in range(50):
             newSentence = markov_model.make_sentence()
-            if not(newSentence is None) and not (testForByline(newSentence, message.clientName, usernames, usermap)):
+            if not (newSentence is None) and not (
+                testForByline(newSentence, message.clientName, usernames, usermap)
+            ):
                 break
 
     byline = ""
     for i in range(len(byUsers)):
-        if(i > 0):
+        if i > 0:
             byline += " and "
         byline += byUsers[i]
 
-    if(newSentence is None) or (testForByline(newSentence, message.clientName, usernames, usermap)):
-        return "Whoops, I tried a few times but it looks like " + username + " needs to talk more before I can generate a good sentence. Try someone else!"
+    if (newSentence is None) or (
+        testForByline(newSentence, message.clientName, usernames, usermap)
+    ):
+        return (
+            "Whoops, I tried a few times but it looks like "
+            + username
+            + " needs to talk more before I can generate a good sentence. Try someone else!"
+        )
     else:
-        return "\"" + newSentence + "\"\n-" + byline
+        return '"' + newSentence + '"\n-' + byline
+
 
 ################################################################################
 # testForByline
@@ -194,17 +228,21 @@ def markov(message):
 # Return - a string of a randomized response
 ################################################################################
 def testForByline(newSentence, clientName, usernames, usermap):
-    if not(newSentence is None):
-        if(clientName in usernames or "everyone" in usernames or "random" in usernames):
-            #try generating a sentence that isn't like "-user and user and user"
+    if not (newSentence is None):
+        if clientName in usernames or "everyone" in usernames or "random" in usernames:
+            # try generating a sentence that isn't like "-user and user and user"
             test_string = newSentence[1:]
-            split_test_string = test_string.split(' and ')
-            if(len(split_test_string) > 1):
+            split_test_string = test_string.split(" and ")
+            if len(split_test_string) > 1:
                 for split_piece in split_test_string:
-                    if not(split_piece in list(usermap.keys())) and not split_piece == "everyone":
+                    if (
+                        not (split_piece in list(usermap.keys()))
+                        and not split_piece == "everyone"
+                    ):
                         return False
                 return True
     return False
+
 
 ################################################################################
 # magic
@@ -219,9 +257,31 @@ def testForByline(newSentence, clientName, usernames, usermap):
 ################################################################################
 def magic(message):
     random.seed()
-    magicOptions = ["It is certain", "It is decidedly so", "Without a doubt", "Yes, definitely", "You may rely on it", "As I see it, yes", "Most likely", "Outlook good", "Yes", "Signs point to yes", "Reply hazy try again", "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again", "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+    magicOptions = [
+        "It is certain",
+        "It is decidedly so",
+        "Without a doubt",
+        "Yes, definitely",
+        "You may rely on it",
+        "As I see it, yes",
+        "Most likely",
+        "Outlook good",
+        "Yes",
+        "Signs point to yes",
+        "Reply hazy try again",
+        "Ask again later",
+        "Better not tell you now",
+        "Cannot predict now",
+        "Concentrate and ask again",
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
+    ]
     magicResult = magicOptions[random.randrange(len(magicOptions))]
     return magicResult
+
 
 ################################################################################
 # roll
@@ -238,34 +298,36 @@ def magic(message):
 def roll(message):
 
     random.seed()
-    errorMessage = "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice."
+    errorMessage = (
+        "Format: '!roll AdB...' where A is the number of rolls of a B-sided dice."
+    )
 
     dieList = message.tokenizedMessage[:]
     dieList.remove("!roll")
 
-
-    reg = re.compile('[1-9]\d*d[1-9]\d*')
-    if(len(list(filter(reg.match,dieList))) != len(dieList)):
+    reg = re.compile("[1-9]\d*d[1-9]\d*")
+    if len(list(filter(reg.match, dieList))) != len(dieList):
         return errorMessage
 
     rollTotal = 0
     rollText = "Result of rolls:"
 
     for die in dieList:
-        attempt = die.split('d')
+        attempt = die.split("d")
         rollText += " ("
         for i in range(int(attempt[0])):
-             x = random.randrange(int(attempt[1])) + 1
-             rollTotal += x
-             if(i == (int(attempt[0]) - 1)):
+            x = random.randrange(int(attempt[1])) + 1
+            rollTotal += x
+            if i == (int(attempt[0]) - 1):
                 rollText += str(x)
-             else:
-                rollText += (str(x) + " + ")
+            else:
+                rollText += str(x) + " + "
         rollText += ") +"
-    rollText = rollText.strip('+')
-    rollText += ("= " + str(rollTotal))
+    rollText = rollText.strip("+")
+    rollText += "= " + str(rollTotal)
 
     return rollText
+
 
 async def dalle(message):
     try:
@@ -278,14 +340,14 @@ async def dalle(message):
         )
         image_data = base64.b64decode(response.data[0].b64_json)
 
-        file_name = './tmp/' + str(response.created) + '.png'
-        with open(file_name, 'wb') as file:
+        file_name = "./tmp/" + str(response.created) + ".png"
+        with open(file_name, "wb") as file:
             file.write(image_data)
 
         return file_name
     except:
-        randint = random.randint(1, 12)
-        return './errors/error' + str(randint) + '.jpg'
+        randint = random.randint(1, 17)
+        return "./errors/error" + str(randint) + ".jpg"
 
 
 ################################################################################
@@ -308,15 +370,16 @@ async def dalle(message):
 def fuzzyMatch(inputStr, matchingStr, threshold, function="ratio"):
     ratio = 0
 
-    if(function == "ratio"):
+    if function == "ratio":
         ratio = fuzz.ratio(inputStr, matchingStr)
-    elif(function == "token_sort_ratio"):
+    elif function == "token_sort_ratio":
         ratio = fuzz.token_sort_ratio(inputStr, matchingStr)
 
-    if(ratio >= threshold):
+    if ratio >= threshold:
         return True
 
     return False
+
 
 ################################################################################
 # checkForClaps
@@ -333,11 +396,12 @@ def fuzzyMatch(inputStr, matchingStr, threshold, function="ratio"):
 # Return - None
 ################################################################################
 async def checkForClaps(message):
-    #TODO this is super inefficient and should be replaced with something better
-    for line in message.api.birdUpText.split('\n'):
-        if(fuzzyMatch(message.tokenizedMessage, line, 50)):
+    # TODO this is super inefficient and should be replaced with something better
+    for line in message.api.birdUpText.split("\n"):
+        if fuzzyMatch(message.tokenizedMessage, line, 50):
             await message.api.addReaction(message, "clap")
             break
+
 
 ################################################################################
 # tokenize
@@ -355,38 +419,38 @@ def tokenize(messageString):
     tokens = []
     currentWord = ""
     inQuotes = False
-    lastChar = ''
+    lastChar = ""
     escaping = False
     for char in messageString:
-        #escape character
-        if(char == '\\'):
-            if(escaping):
+        # escape character
+        if char == "\\":
+            if escaping:
                 currentWord += str(char)
             else:
                 escaping = True
-        #quotes for longer tokens
-        elif(char == '"'):
-            if (escaping):
+        # quotes for longer tokens
+        elif char == '"':
+            if escaping:
                 currentWord += str(char)
             else:
                 inQuotes = not inQuotes
-                if(len(currentWord) > 0):
+                if len(currentWord) > 0:
                     tokens.append(currentWord)
                     currentWord = ""
-        #split character
-        elif(char == ' '):
-            if not(inQuotes):
-                if(len(currentWord) > 0):
+        # split character
+        elif char == " ":
+            if not (inQuotes):
+                if len(currentWord) > 0:
                     tokens.append(currentWord)
                     currentWord = ""
             else:
                 currentWord += str(char)
         else:
             currentWord += str(char)
-        #only escape one char
-        if(lastChar == '\\'):
+        # only escape one char
+        if lastChar == "\\":
             escaping = False
         lastChar = char
-    if(len(currentWord) > 0):
+    if len(currentWord) > 0:
         tokens.append(currentWord)
     return tokens
